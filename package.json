@@ -13,11 +13,11 @@
     "prettier:fix": "prettier --write 'src/**/*.{ts,tsx}'",
     "test": "echo \"Error: no test specified\" && exit 1",
     "resource": "node ./.bin/cli.js resource",
-    "nested-resource": "node ./.bin/cli.js nested-resource"
+    "resource:nested": "node ./.bin/cli.js nested-resource"
   },
   "bin": {
     "resource": "./bin/cli.js",
-    "nested-resource": "./bin/cli.js"
+    "resource:nested": "./bin/cli.js"
   },
   "keywords": [
     "typescript",

@@ -606,19 +606,19 @@ The CLI tool can be executed using the following command(nested resource):
 **By using npm**:
 
 ```bash
-npm run nested-resource folder1/folder2/<resource-name>
+npm run resource:nested folder1/folder2/<resource-name>
 ```
 
 **By using yarn**:
 
 ```bash
-yarn run nested-resource folder1/folder2/<resource-name>
+yarn run resource:nested folder1/folder2/<resource-name>
 ```
 
 **By using pnpm**:
 
 ```bash
-pnpm run nested-resource folder1/folder2/<resource-name>
+pnpm run resource:nested folder1/folder2/<resource-name>
 ```
 
 **It will act same like the previous command but it will generate the resources as nested you want.**
