@@ -1,6 +1,6 @@
 import { Prisma } from '@prisma/client';
 
-// Import the prisma client
+// Import the Prisma Client instance
 import { prismaClient } from '../../index';
 
 /**

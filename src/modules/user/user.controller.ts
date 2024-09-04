@@ -25,14 +25,14 @@ export const createUser = catchAsync(async (req: Request, res: Response) => {
  * @returns {void}
  */
 export const createManyUser = catchAsync(async (req: Request, res: Response) => {
-  // Call the service method to create multiple user and get the result
+  // Call the service method to create multiple users and get the result
   const result = await userServices.createManyUser(req.body);
   // Send a success response with the created resources data
   ServerResponse(res, true, 201, 'Resources created successfully', result);
 });
 
 /**
- * Controller function to handle the update operation for a single User.
+ * Controller function to handle the update operation for a single user.
  *
  * @param {Request} req - The request object containing the ID of the user to update in URL parameters and the updated data in the body.
  * @param {Response} res - The response object used to send the response.
@@ -61,7 +61,7 @@ export const updateManyUser = catchAsync(async (req: Request, res: Response) => 
 });
 
 /**
- * Controller function to handle the deletion of a single User.
+ * Controller function to handle the deletion of a single user.
  *
  * @param {Request} req - The request object containing the ID of the user to delete in URL parameters.
  * @param {Response} res - The response object used to send the response.
@@ -90,7 +90,7 @@ export const deleteManyUser = catchAsync(async (req: Request, res: Response) => 
 });
 
 /**
- * Controller function to handle the retrieval of a single User by ID.
+ * Controller function to handle the retrieval of a single user by ID.
  *
  * @param {Request} req - The request object containing the ID of the user to retrieve in URL parameters.
  * @param {Response} res - The response object used to send the response.
