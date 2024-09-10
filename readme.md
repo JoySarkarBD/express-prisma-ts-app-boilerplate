@@ -229,14 +229,14 @@ export const createUser = catchAsync(async (req: Request, res: Response) => {
  * @returns {void}
  */
 export const createManyUser = catchAsync(async (req: Request, res: Response) => {
-  // Call the service method to create multiple user and get the result
+  // Call the service method to create multiple users and get the result
   const result = await userServices.createManyUser(req.body);
   // Send a success response with the created resources data
   ServerResponse(res, true, 201, 'Resources created successfully', result);
 });
 
 /**
- * Controller function to handle the update operation for a single User.
+ * Controller function to handle the update operation for a single user.
  *
  * @param {Request} req - The request object containing the ID of the user to update in URL parameters and the updated data in the body.
  * @param {Response} res - The response object used to send the response.
@@ -265,7 +265,7 @@ export const updateManyUser = catchAsync(async (req: Request, res: Response) => 
 });
 
 /**
- * Controller function to handle the deletion of a single User.
+ * Controller function to handle the deletion of a single user.
  *
  * @param {Request} req - The request object containing the ID of the user to delete in URL parameters.
  * @param {Response} res - The response object used to send the response.
@@ -294,7 +294,7 @@ export const deleteManyUser = catchAsync(async (req: Request, res: Response) => 
 });
 
 /**
- * Controller function to handle the retrieval of a single User by ID.
+ * Controller function to handle the retrieval of a single user by ID.
  *
  * @param {Request} req - The request object containing the ID of the user to retrieve in URL parameters.
  * @param {Response} res - The response object used to send the response.
@@ -342,22 +342,24 @@ import {
 } from './user.controller';
 
 //Import validation from corresponding module
-import { validateUserId } from './user.validation';
+import { validateUser } from './user.validation';
+import { validateId, validateIds } from '../../handlers/common-zod-validator';
 
 // Initialize router
 const router = Router();
 
 // Define route handlers
 /**
- * @route POST /api/v1//user/create-user
+ * @route POST /api/v1/user/create-user
  * @description Create a new user
  * @access Public
  * @param {function} controller - ['createUser']
+ * @param {function} validation - ['validateUser']
  */
-router.post('/create-user', createUser);
+router.post('/create-user', validateUser, createUser);
 
 /**
- * @route POST /api/v1//user/create-user/many
+ * @route POST /api/v1/user/create-user/many
  * @description Create multiple user
  * @access Public
  * @param {function} controller - ['createManyUser']
@@ -365,58 +367,61 @@ router.post('/create-user', createUser);
 router.post('/create-user/many', createManyUser);
 
 /**
- * @route PUT /api/v1//user/update-user/many
+ * @route PUT /api/v1/user/update-user/many
  * @description Update multiple user information
  * @access Public
  * @param {function} controller - ['updateManyUser']
+ * @param {function} validation - ['validateIds']
  */
-router.put('/update-user/many', updateManyUser);
+router.put('/update-user/many', validateIds, updateManyUser);
 
 /**
- * @route PUT /api/v1//user/update-user/:id
+ * @route PUT /api/v1/user/update-user/:id
  * @description Update user information
  * @param {string} id - The ID of the user to update
  * @access Public
  * @param {function} controller - ['updateUser']
- * @param {function} validation - ['validateUserId']
+ * @param {function} validation - ['validateId']
  */
-router.put('/update-user/:id', validateUserId, updateUser);
+router.put('/update-user/:id', validateId, updateUser);
 
 /**
- * @route DELETE /api/v1//user/delete-user/many
+ * @route DELETE /api/v1/user/delete-user/many
  * @description Delete multiple user
  * @access Public
  * @param {function} controller - ['deleteManyUser']
+ * @param {function} validation - ['validateIds']
  */
-router.delete('/delete-user/many', deleteManyUser);
+router.delete('/delete-user/many', validateIds, deleteManyUser);
 
 /**
- * @route DELETE /api/v1//user/delete-user/:id
+ * @route DELETE /api/v1/user/delete-user/:id
  * @description Delete a user
  * @param {string} id - The ID of the user to delete
  * @access Public
  * @param {function} controller - ['deleteUser']
- * @param {function} validation - ['validateUserId']
+ * @param {function} validation - ['validateId']
  */
-router.delete('/delete-user/:id', validateUserId, deleteUser);
+router.delete('/delete-user/:id', validateId, deleteUser);
 
 /**
- * @route GET /api/v1//user/get-user/many
+ * @route GET /api/v1/user/get-user/many
  * @description Get multiple user
  * @access Public
  * @param {function} controller - ['getManyUser']
+ * @param {function} validation - ['validateIds']
  */
-router.get('/get-user/many', getManyUser);
+router.get('/get-user/many', validateIds, getManyUser);
 
 /**
- * @route GET /api/v1//user/get-user/:id
+ * @route GET /api/v1/user/get-user/:id
  * @description Get a user by ID
  * @param {string} id - The ID of the user to retrieve
  * @access Public
  * @param {function} controller - ['getUserById']
- * @param {function} validation - ['validateUserId']
+ * @param {function} validation - ['validateId']
  */
-router.get('/get-user/:id', validateUserId, getUserById);
+router.get('/get-user/:id', validateId, getUserById);
 
 // Export the router
 module.exports = router;
@@ -427,7 +432,7 @@ module.exports = router;
 ```typescript
 import { Prisma } from '@prisma/client';
 
-// Import the prisma client
+// Import the Prisma Client instance
 import { prismaClient } from '../../index';
 
 /**
@@ -546,7 +551,6 @@ export const userServices = {
 
 ```typescript
 import { NextFunction, Request, Response } from 'express';
-import { isMongoId } from 'validator';
 import { z } from 'zod';
 import zodErrorHandler from '../../handlers/zod-error-handler';
 
@@ -555,36 +559,20 @@ import zodErrorHandler from '../../handlers/zod-error-handler';
  */
 const zodUserSchema = z
   .object({
-    id: z
-      .string({
-        required_error: 'Id is required',
-        invalid_type_error: 'Please provide a valid id',
-      })
-      .refine((id: string) => isMongoId(id), {
-        message: 'Please provide a valid id',
-      }),
-    ids: z
-      .array(
-        z.string().refine((id: string) => isMongoId(id), {
-          message: 'Each ID must be a valid MongoDB ObjectId',
-        })
-      )
-      .min(1, {
-        message: 'At least one ID must be provided',
-      }),
+    // Define schema fields here
   })
   .strict();
 
 /**
- * Middleware function to validate user ID using Zod schema.
+ * Middleware function to validate user using Zod schema.
  * @param {object} req - The request object.
  * @param {object} res - The response object.
  * @param {function} next - The next middleware function.
  * @returns {void}
  */
-export const validateUserId = (req: Request, res: Response, next: NextFunction) => {
+export const validateUser = (req: Request, res: Response, next: NextFunction) => {
   // Validate request params
-  const { error, success } = zodUserSchema.pick({ id: true }).safeParse({ id: req.params.id });
+  const { error, success } = zodUserSchema.safeParse(req.body);
 
   // Check if validation was successful
   if (!success) {
