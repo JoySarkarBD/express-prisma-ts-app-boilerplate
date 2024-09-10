@@ -14,6 +14,7 @@ import hpp from 'hpp';
 import morgan from 'morgan';
 import config from './config/config';
 import PathNotFound from './helpers/responses/path-not-found';
+import { loggerStream } from './utils/logger/logger';
 
 // Express app initialization
 const app: Application = express();
@@ -33,6 +34,11 @@ app.use(helmet());
 app.use(mongoSanitize());
 app.use(hpp());
 app.use(morgan('dev'));
+
+// Use Morgan with the custom logger in development stage
+if (process.env.NODE_ENV !== 'production') {
+  app.use(morgan('combined', { stream: loggerStream }));
+}
 
 // Request Rate Limiting
 const limiter = rateLimit({
