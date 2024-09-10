@@ -17,7 +17,7 @@ const zodUserSchema = z.object({
  * @returns {void}
  */
 export const validateUser = (req: Request, res: Response, next: NextFunction) => {
-  // Validate request params
+  // Validate request body
   const { error, success } = zodUserSchema.safeParse(req.body);
 
   // Check if validation was successful
