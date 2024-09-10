@@ -83,7 +83,8 @@ import {
 } from './${args[0]}.controller';
 
 //Import validation from corresponding module
-import { validate${capitalizedResourceName}Id } from './${args[0]}.validation';
+import { validate${capitalizedResourceName} } from './${args[0]}.validation';
+import { validateId, validateIds } from '../../handlers/common-zod-validator';
 
 // Initialize router
 const router = Router();
@@ -94,8 +95,9 @@ const router = Router();
  * @description Create a new ${args[0]}
  * @access Public
  * @param {function} controller - ['create${capitalizedResourceName}']
+ * @param {function} validation - ['validate${capitalizedResourceName}']
  */
-router.post("/create-${args[0]}", create${capitalizedResourceName});
+router.post("/create-${args[0]}", validate${capitalizedResourceName}, create${capitalizedResourceName});
 
 /**
  * @route POST /api/v1/${args[0]}/create-${args[0]}/many
@@ -110,8 +112,9 @@ router.post("/create-${args[0]}/many", createMany${capitalizedResourceName});
  * @description Update multiple ${args[0]} information
  * @access Public
  * @param {function} controller - ['updateMany${capitalizedResourceName}']
+ * @param {function} validation - ['validateIds']
  */
-router.put("/update-${args[0]}/many", updateMany${capitalizedResourceName});
+router.put("/update-${args[0]}/many", validateIds, updateMany${capitalizedResourceName});
 
 /**
  * @route PUT /api/v1/${args[0]}/update-${args[0]}/:id
@@ -119,17 +122,18 @@ router.put("/update-${args[0]}/many", updateMany${capitalizedResourceName});
  * @param {string} id - The ID of the ${args[0]} to update
  * @access Public
  * @param {function} controller - ['update${capitalizedResourceName}']
- * @param {function} validation - ['validate${capitalizedResourceName}Id']
+ * @param {function} validation - ['validateId']
  */
-router.put("/update-${args[0]}/:id", validate${capitalizedResourceName}Id, update${capitalizedResourceName});
+router.put("/update-${args[0]}/:id", validateId, update${capitalizedResourceName});
 
 /**
  * @route DELETE /api/v1/${args[0]}/delete-${args[0]}/many
  * @description Delete multiple ${args[0]}
  * @access Public
  * @param {function} controller - ['deleteMany${capitalizedResourceName}']
+ * @param {function} validation - ['validateIds']
  */
-router.delete("/delete-${args[0]}/many", deleteMany${capitalizedResourceName});
+router.delete("/delete-${args[0]}/many", validateIds, deleteMany${capitalizedResourceName});
 
 /**
  * @route DELETE /api/v1/${args[0]}/delete-${args[0]}/:id
@@ -137,17 +141,18 @@ router.delete("/delete-${args[0]}/many", deleteMany${capitalizedResourceName});
  * @param {string} id - The ID of the ${args[0]} to delete
  * @access Public
  * @param {function} controller - ['delete${capitalizedResourceName}']
- * @param {function} validation - ['validate${capitalizedResourceName}Id']
+ * @param {function} validation - ['validateId']
  */
-router.delete("/delete-${args[0]}/:id", validate${capitalizedResourceName}Id, delete${capitalizedResourceName});
+router.delete("/delete-${args[0]}/:id", validateId, delete${capitalizedResourceName});
 
 /**
  * @route GET /api/v1/${args[0]}/get-${args[0]}/many
  * @description Get multiple ${args[0]}
  * @access Public
  * @param {function} controller - ['getMany${capitalizedResourceName}']
+ * @param {function} validation - ['validateIds']
  */
-router.get("/get-${args[0]}/many", getMany${capitalizedResourceName});
+router.get("/get-${args[0]}/many", validateIds, getMany${capitalizedResourceName});
 
 /**
  * @route GET /api/v1/${args[0]}/get-${args[0]}/:id
@@ -155,9 +160,9 @@ router.get("/get-${args[0]}/many", getMany${capitalizedResourceName});
  * @param {string} id - The ID of the ${args[0]} to retrieve
  * @access Public
  * @param {function} controller - ['get${capitalizedResourceName}ById']
- * @param {function} validation - ['validate${capitalizedResourceName}Id']
+ * @param {function} validation - ['validateId']
  */
-router.get("/get-${args[0]}/:id", validate${capitalizedResourceName}Id, get${capitalizedResourceName}ById);
+router.get("/get-${args[0]}/:id", validateId, get${capitalizedResourceName}ById);
 
 // Export the router
 module.exports = router;
@@ -299,7 +304,6 @@ export const getMany${capitalizedResourceName} = catchAsync(async (req: Request,
       // Create Zod validation schema content
       const validationContent = `
 import { NextFunction, Request, Response } from 'express';
-import { isMongoId } from 'validator';
 import { z } from 'zod';
 import zodErrorHandler from '../../handlers/zod-error-handler';
 
@@ -307,33 +311,19 @@ import zodErrorHandler from '../../handlers/zod-error-handler';
  * Zod schema for validating ${resourceName} data.
  */
 const zod${capitalizedResourceName}Schema = z.object({
-  id: z
-    .string({
-      required_error: "Id is required",
-      invalid_type_error: "Please provide a valid id",
-    })
-    .uuid({
-      message: "Please provide a valid UUID",
-    }),
-  ids: z
-    .array(z.string().uuid({
-      message: "Each ID must be a valid UUID",
-    }))
-    .min(1, {
-      message: "At least one ID must be provided",
-    }),
+ // Define schema fields here
 }).strict();
-    
+
 /**
- * Middleware function to validate ${resourceName} ID using Zod schema.
+ * Middleware function to validate ${resourceName} using Zod schema.
  * @param {object} req - The request object.
  * @param {object} res - The response object.
  * @param {function} next - The next middleware function.
  * @returns {void}
  */
-export const validate${capitalizedResourceName}Id = (req: Request, res: Response, next: NextFunction) => {
+export const validate${capitalizedResourceName} = (req: Request, res: Response, next: NextFunction) => {
   // Validate request params
-  const { error, success } = zod${capitalizedResourceName}Schema.pick({ id: true }).safeParse({ id: req.params.id });
+  const { error, success } = zod${capitalizedResourceName}Schema.safeParse(req.body);
 
   // Check if validation was successful
   if (!success) {
@@ -548,7 +538,10 @@ import {
 } from './${resourceName}.controller';
 
 //Import validation from corresponding module
-import { validate${capitalizedResourceName}Id } from './${resourceName}.validation';
+import { validate${capitalizedResourceName} } from './${resourceName}.validation';
+import { validateId, validateIds } from '${Array(nestedFolders.length + 2)
+        .fill('..')
+        .join('/')}/handlers/common-zod-validator';
       
 // Initialize router
 const router = Router();
@@ -559,8 +552,9 @@ const router = Router();
  * @description Create a new ${resourceName}
  * @access Public
  * @param {function} controller - ['create${capitalizedResourceName}']
+ * @param {function} validation - ['validate${capitalizedResourceName}']
  */
-router.post("/create-${resourceName}", create${capitalizedResourceName});
+router.post("/create-${resourceName}", validate${capitalizedResourceName}, create${capitalizedResourceName});
 
 /**
  * @route POST /api/v1/${nestedFolders.join('/')}/${resourceName}/create-${resourceName}/many
@@ -575,8 +569,9 @@ router.post("/create-${resourceName}/many", createMany${capitalizedResourceName}
  * @description Update multiple ${resourceName} information
  * @access Public
  * @param {function} controller - ['updateMany${capitalizedResourceName}']
+ * @param {function} validation - ['validateIds']
  */
-router.put("/update-${resourceName}/many", updateMany${capitalizedResourceName});
+router.put("/update-${resourceName}/many", validateIds, updateMany${capitalizedResourceName});
 
 /**
  * @route PUT /api/v1/${nestedFolders.join('/')}/${resourceName}/update-${resourceName}/:id
@@ -584,17 +579,18 @@ router.put("/update-${resourceName}/many", updateMany${capitalizedResourceName})
  * @param {string} id - The ID of the ${resourceName} to update
  * @access Public
  * @param {function} controller - ['update${capitalizedResourceName}']
- * @param {function} validation - ['validate${capitalizedResourceName}Id']
+ * @param {function} validation - ['validateId']
  */
-router.put("/update-${resourceName}/:id", validate${capitalizedResourceName}Id, update${capitalizedResourceName});
+router.put("/update-${resourceName}/:id", validateId, update${capitalizedResourceName});
 
 /**
  * @route DELETE /api/v1/${nestedFolders.join('/')}/${resourceName}/delete-${resourceName}/many
  * @description Delete multiple ${resourceName}
  * @access Public
  * @param {function} controller - ['deleteMany${capitalizedResourceName}']
+ * @param {function} validation - ['validateIds']
  */
-router.delete("/delete-${resourceName}/many", deleteMany${capitalizedResourceName});
+router.delete("/delete-${resourceName}/many", validateIds, deleteMany${capitalizedResourceName});
 
 /**
  * @route DELETE /api/v1/${nestedFolders.join('/')}/${resourceName}/delete-${resourceName}/:id
@@ -602,17 +598,18 @@ router.delete("/delete-${resourceName}/many", deleteMany${capitalizedResourceNam
  * @param {string} id - The ID of the ${resourceName} to delete
  * @access Public
  * @param {function} controller - ['delete${capitalizedResourceName}']
- * @param {function} validation - ['validate${capitalizedResourceName}Id']
+ * @param {function} validation - ['validateId']
  */
-router.delete("/delete-${resourceName}/:id", validate${capitalizedResourceName}Id, delete${capitalizedResourceName});
+router.delete("/delete-${resourceName}/:id", validateId, delete${capitalizedResourceName});
 
 /**
  * @route GET /api/v1/${nestedFolders.join('/')}/${resourceName}/get-${resourceName}/many
  * @description Get multiple ${resourceName}
  * @access Public
  * @param {function} controller - ['getMany${capitalizedResourceName}']
+ * @param {function} validation - ['validateIds']
  */
-router.get("/get-${resourceName}/many", getMany${capitalizedResourceName});
+router.get("/get-${resourceName}/many", validateIds, getMany${capitalizedResourceName});
 
 /**
  * @route GET /api/v1/${nestedFolders.join('/')}/${resourceName}/get-${resourceName}/:id
@@ -620,9 +617,9 @@ router.get("/get-${resourceName}/many", getMany${capitalizedResourceName});
  * @param {string} id - The ID of the ${resourceName} to retrieve
  * @access Public
  * @param {function} controller - ['get${capitalizedResourceName}ById']
- * @param {function} validation - ['validate${capitalizedResourceName}Id']
+ * @param {function} validation - ['validateId']
  */
-router.get("/get-${resourceName}/:id", validate${capitalizedResourceName}Id, get${capitalizedResourceName}ById);
+router.get("/get-${resourceName}/:id", validateId, get${capitalizedResourceName}ById);
 
 // Export the router
 module.exports = router;
@@ -766,7 +763,6 @@ export const getMany${capitalizedResourceName} = catchAsync(async (req: Request,
       // Create Zod validation schema file (similar to the original)
       const validationContent = `
 import { NextFunction, Request, Response } from 'express';
-import { isMongoId } from 'validator';
 import { z } from 'zod';
 import zodErrorHandler from '${Array(nestedFolders.length + 2)
         .fill('..')
@@ -776,33 +772,19 @@ import zodErrorHandler from '${Array(nestedFolders.length + 2)
  * Zod schema for validating ${resourceName} data.
  */
 const zod${capitalizedResourceName}Schema = z.object({
-  id: z
-    .string({
-      required_error: "Id is required",
-      invalid_type_error: "Please provide a valid id",
-    })
-    .uuid({
-      message: "Please provide a valid UUID",
-    }),
-  ids: z
-    .array(z.string().uuid({
-      message: "Each ID must be a valid UUID",
-    }))
-    .min(1, {
-      message: "At least one ID must be provided",
-    }),
+  // Define schema fields here
 }).strict();
 
 /**
- * Middleware function to validate ${resourceName} ID using Zod schema.
+ * Middleware function to validate ${resourceName} using Zod schema.
  * @param {object} req - The request object.
  * @param {object} res - The response object.
  * @param {function} next - The next middleware function.
  * @returns {void}
  */
-export const validate${capitalizedResourceName}Id = (req: Request, res: Response, next: NextFunction) => {
+export const validate${capitalizedResourceName} = (req: Request, res: Response, next: NextFunction) => {
   // Validate request params
-  const { error, success } = zod${capitalizedResourceName}Schema.pick({ id: true }).safeParse({ id: req.params.id });
+  const { error, success } = zod${capitalizedResourceName}Schema.safeParse(req.body);
 
   // Check if validation was successful
   if (!success) {
@@ -813,7 +795,8 @@ export const validate${capitalizedResourceName}Id = (req: Request, res: Response
   // If validation passed, proceed to the next middleware function
   return next();
 };
-    `;
+
+`;
 
       // Path to the zod validation file
       const validationFilePath = path.join(moduleDir, `${resourceName}.validation.ts`);

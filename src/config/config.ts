@@ -1,4 +1,4 @@
-import dotenv from "dotenv";
+import dotenv from 'dotenv';
 
 dotenv.config();
 
@@ -13,10 +13,12 @@ interface Config {
   EMAIL_USER: string;
   EMAIL_PASSWORD: string;
   MAX_JSON_SIZE: string;
+  MAX_FILE_SIZE: number;
   URL_ENCODED: boolean;
   REQUEST_LIMIT_TIME: number;
   REQUEST_LIMIT_NUMBER: number;
   WEB_CACHE: boolean;
+  EXPRESS_FILE_UPLOAD_CONFIG: object;
 }
 
 const config: Config = {
@@ -30,13 +32,18 @@ const config: Config = {
   EMAIL_USER: process.env.EMAIL_USER as string,
   EMAIL_PASSWORD: process.env.EMAIL_PASSWORD as string,
   MAX_JSON_SIZE: process.env.MAX_JSON_SIZE as string,
-  URL_ENCODED: process.env.URL_ENCODED === "true",
+  MAX_FILE_SIZE: parseInt(process.env.MAX_FILE_SIZE as string, 10),
+  URL_ENCODED: process.env.URL_ENCODED === 'true',
   REQUEST_LIMIT_TIME: parseInt(process.env.REQUEST_LIMIT_TIME as string, 10),
-  REQUEST_LIMIT_NUMBER: parseInt(
-    process.env.REQUEST_LIMIT_NUMBER as string,
-    10
-  ),
-  WEB_CACHE: process.env.WEB_CACHE === "true",
+  REQUEST_LIMIT_NUMBER: parseInt(process.env.REQUEST_LIMIT_NUMBER as string, 10),
+  WEB_CACHE: process.env.WEB_CACHE === 'true',
+  EXPRESS_FILE_UPLOAD_CONFIG: {
+    createParentPath: true,
+    preserveExtension: true,
+    limits: {
+      fileSize: parseInt(process.env.MAX_FILE_SIZE as string, 10),
+    },
+  },
 };
 
 export default config;

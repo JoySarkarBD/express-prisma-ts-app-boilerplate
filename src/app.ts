@@ -2,6 +2,7 @@
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import express, { Application, Request, Response } from 'express';
+import fileUpload from 'express-fileupload';
 import fs from 'fs';
 import path from 'path';
 
@@ -24,6 +25,7 @@ const publicDirPath = path.join(__dirname, '..', 'public');
 app.use(express.json({ limit: config.MAX_JSON_SIZE }));
 app.use(express.urlencoded({ extended: config.URL_ENCODED }));
 app.use(cookieParser());
+app.use(fileUpload(config.EXPRESS_FILE_UPLOAD_CONFIG));
 
 // Security middleware initialization
 app.use(cors());

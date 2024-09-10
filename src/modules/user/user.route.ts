@@ -14,7 +14,8 @@ import {
 } from './user.controller';
 
 //Import validation from corresponding module
-import { validateUserId } from './user.validation';
+import { validateUser } from './user.validation';
+import { validateId, validateIds } from '../../handlers/common-zod-validator';
 
 // Initialize router
 const router = Router();
@@ -25,8 +26,9 @@ const router = Router();
  * @description Create a new user
  * @access Public
  * @param {function} controller - ['createUser']
+ * @param {function} validation - ['validateUser']
  */
-router.post("/create-user", createUser);
+router.post("/create-user", validateUser, createUser);
 
 /**
  * @route POST /api/v1/user/create-user/many
@@ -41,8 +43,9 @@ router.post("/create-user/many", createManyUser);
  * @description Update multiple user information
  * @access Public
  * @param {function} controller - ['updateManyUser']
+ * @param {function} validation - ['validateIds']
  */
-router.put("/update-user/many", updateManyUser);
+router.put("/update-user/many", validateIds, updateManyUser);
 
 /**
  * @route PUT /api/v1/user/update-user/:id
@@ -50,17 +53,18 @@ router.put("/update-user/many", updateManyUser);
  * @param {string} id - The ID of the user to update
  * @access Public
  * @param {function} controller - ['updateUser']
- * @param {function} validation - ['validateUserId']
+ * @param {function} validation - ['validateId']
  */
-router.put("/update-user/:id", validateUserId, updateUser);
+router.put("/update-user/:id", validateId, updateUser);
 
 /**
  * @route DELETE /api/v1/user/delete-user/many
  * @description Delete multiple user
  * @access Public
  * @param {function} controller - ['deleteManyUser']
+ * @param {function} validation - ['validateIds']
  */
-router.delete("/delete-user/many", deleteManyUser);
+router.delete("/delete-user/many", validateIds, deleteManyUser);
 
 /**
  * @route DELETE /api/v1/user/delete-user/:id
@@ -68,17 +72,18 @@ router.delete("/delete-user/many", deleteManyUser);
  * @param {string} id - The ID of the user to delete
  * @access Public
  * @param {function} controller - ['deleteUser']
- * @param {function} validation - ['validateUserId']
+ * @param {function} validation - ['validateId']
  */
-router.delete("/delete-user/:id", validateUserId, deleteUser);
+router.delete("/delete-user/:id", validateId, deleteUser);
 
 /**
  * @route GET /api/v1/user/get-user/many
  * @description Get multiple user
  * @access Public
  * @param {function} controller - ['getManyUser']
+ * @param {function} validation - ['validateIds']
  */
-router.get("/get-user/many", getManyUser);
+router.get("/get-user/many", validateIds, getManyUser);
 
 /**
  * @route GET /api/v1/user/get-user/:id
@@ -86,9 +91,9 @@ router.get("/get-user/many", getManyUser);
  * @param {string} id - The ID of the user to retrieve
  * @access Public
  * @param {function} controller - ['getUserById']
- * @param {function} validation - ['validateUserId']
+ * @param {function} validation - ['validateId']
  */
-router.get("/get-user/:id", validateUserId, getUserById);
+router.get("/get-user/:id", validateId, getUserById);
 
 // Export the router
 module.exports = router;
