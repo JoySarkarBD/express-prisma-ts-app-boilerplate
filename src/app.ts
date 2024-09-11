@@ -35,10 +35,8 @@ app.use(mongoSanitize());
 app.use(hpp());
 app.use(morgan('dev'));
 
-// Use Morgan with the custom logger in development stage
-if (process.env.NODE_ENV !== 'production') {
-  app.use(morgan('combined', { stream: loggerStream }));
-}
+// Use Morgan with the custom logger
+app.use(morgan('combined', { stream: loggerStream }));
 
 // Request Rate Limiting
 const limiter = rateLimit({
