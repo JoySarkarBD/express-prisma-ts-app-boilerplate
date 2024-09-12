@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import ServerResponse from 'src/helpers/responses/custom-response';
-import DecodeToken from 'src/utils/jwt/decode-token';
+import DecodeToken from '../utils/jwt/decode-token';
 
 // Extend the Request interface to include a user property
 interface AuthenticatedRequest extends Request {
