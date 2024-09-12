@@ -1,5 +1,5 @@
 import { NextFunction, Request, Response } from 'express';
-import ServerResponse from 'src/helpers/responses/custom-response';
+import ServerResponse from '../helpers/responses/custom-response';
 import DecodeToken from '../utils/jwt/decode-token';
 
 // Extend the Request interface to include a user property
