@@ -122,9 +122,9 @@ router.put("/update-${args[0]}/many", validateIds, updateMany${capitalizedResour
  * @param {string} id - The ID of the ${args[0]} to update
  * @access Public
  * @param {function} controller - ['update${capitalizedResourceName}']
- * @param {function} validation - ['validateId']
+ * @param {function} validation - ['validateId', 'validate${capitalizedResourceName}']
  */
-router.put("/update-${args[0]}/:id", validateId, update${capitalizedResourceName});
+router.put("/update-${args[0]}/:id", validateId, validate${capitalizedResourceName}, update${capitalizedResourceName});
 
 /**
  * @route DELETE /api/v1/${args[0]}/delete-${args[0]}/many
@@ -539,7 +539,7 @@ import {
 
 //Import validation from corresponding module
 import { validate${capitalizedResourceName} } from './${resourceName}.validation';
-import { validateId, validateIds } from '${Array(nestedFolders.length + 2)
+import { validateId, validateIds } from '${Array(nestedFolders.length + 1)
         .fill('..')
         .join('/')}/handlers/common-zod-validator';
       
@@ -579,9 +579,9 @@ router.put("/update-${resourceName}/many", validateIds, updateMany${capitalizedR
  * @param {string} id - The ID of the ${resourceName} to update
  * @access Public
  * @param {function} controller - ['update${capitalizedResourceName}']
- * @param {function} validation - ['validateId']
+ * @param {function} validation - ['validateId', 'validate${capitalizedResourceName}']
  */
-router.put("/update-${resourceName}/:id", validateId, update${capitalizedResourceName});
+router.put("/update-${resourceName}/:id", validateId, validate${capitalizedResourceName}, update${capitalizedResourceName});
 
 /**
  * @route DELETE /api/v1/${nestedFolders.join('/')}/${resourceName}/delete-${resourceName}/many
@@ -633,10 +633,10 @@ module.exports = router;
       const controllerContent = `
 import { Request, Response } from 'express';
 import { ${resourceCamelCaseName}Services } from './${resourceName}.service';
-import ServerResponse from '${Array(nestedFolders.length + 2)
+import ServerResponse from '${Array(nestedFolders.length + 1)
         .fill('..')
         .join('/')}/helpers/responses/custom-response';
-import catchAsync from '${Array(nestedFolders.length + 2)
+import catchAsync from '${Array(nestedFolders.length + 1)
         .fill('..')
         .join('/')}/utils/catch-async/catch-async';
 
@@ -764,7 +764,7 @@ export const getMany${capitalizedResourceName} = catchAsync(async (req: Request,
       const validationContent = `
 import { NextFunction, Request, Response } from 'express';
 import { z } from 'zod';
-import zodErrorHandler from '${Array(nestedFolders.length + 2)
+import zodErrorHandler from '${Array(nestedFolders.length + 1)
         .fill('..')
         .join('/')}/handlers/zod-error-handler';
 
@@ -807,7 +807,7 @@ export const validate${capitalizedResourceName} = (req: Request, res: Response, 
 import { Prisma } from '@prisma/client';
 
 // Import the prisma client
-import { prismaClient } from '${Array(nestedFolders.length + 2)
+import { prismaClient } from '${Array(nestedFolders.length + 1)
         .fill('..')
         .join('/')}/index';
 

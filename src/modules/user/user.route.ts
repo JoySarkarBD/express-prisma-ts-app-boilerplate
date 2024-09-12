@@ -53,9 +53,9 @@ router.put("/update-user/many", validateIds, updateManyUser);
  * @param {string} id - The ID of the user to update
  * @access Public
  * @param {function} controller - ['updateUser']
- * @param {function} validation - ['validateId']
+ * @param {function} validation - ['validateId', 'validateUser']
  */
-router.put("/update-user/:id", validateId, updateUser);
+router.put("/update-user/:id", validateId, validateUser, updateUser);
 
 /**
  * @route DELETE /api/v1/user/delete-user/many
