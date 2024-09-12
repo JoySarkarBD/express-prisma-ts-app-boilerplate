@@ -1,5 +1,5 @@
 import jwt from 'jsonwebtoken';
-import config from 'src/config/config';
+import config from '../../config/config';
 
 /**
  * Generates a JWT token for a user based on their email and user ID.

@@ -1,5 +1,5 @@
 import jwt, { JwtPayload } from 'jsonwebtoken';
-import config from 'src/config/config';
+import config from '../../config/config';
 
 /**
  * Verifies a JWT token using a secret key.

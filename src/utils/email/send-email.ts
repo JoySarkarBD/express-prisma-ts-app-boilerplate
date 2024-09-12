@@ -1,5 +1,5 @@
 import nodemailer, { Transporter } from 'nodemailer';
-import config from 'src/config/config';
+import config from '../../config/config';
 
 // Define the function's parameter types
 interface EmailOptions {
