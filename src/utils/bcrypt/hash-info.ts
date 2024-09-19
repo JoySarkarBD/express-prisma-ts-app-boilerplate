@@ -1,4 +1,5 @@
 import bcrypt from 'bcryptjs';
+import config from '../../config/config';
 
 /**
  * Hashes the given data using bcrypt.
@@ -7,8 +8,8 @@ import bcrypt from 'bcryptjs';
  * @returns {Promise<string>} - A promise that resolves to the hashed data.
  */
 const HashInfo = async (data: string) => {
-  // Hash the data using bcrypt with a salt rounds value of 10
-  return await bcrypt.hash(data, 10);
+  // Hash the data using bcrypt with a salt rounds value
+  return await bcrypt.hash(data, config.SALT_ROUNDS);
 };
 
 export default HashInfo;

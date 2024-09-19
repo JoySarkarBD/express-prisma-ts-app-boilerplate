@@ -6,6 +6,7 @@ interface Config {
   PORT: number;
   DB_CONNECTION_URI: string;
   NODE_ENV: string;
+  SALT_ROUNDS: number;
   JWT_SECRET: string;
   JWT_EXPIRATION_TIME: number;
   EMAIL_HOST: string;
@@ -25,6 +26,7 @@ const config: Config = {
   PORT: parseInt(process.env.PORT as string, 10),
   DB_CONNECTION_URI: process.env.DB_CONNECTION_URI as string,
   NODE_ENV: process.env.NODE_ENV as string,
+  SALT_ROUNDS: parseInt(process.env.SALT_ROUNDS as string, 10),
   JWT_SECRET: process.env.JWT_SECRET as string,
   JWT_EXPIRATION_TIME: parseInt(process.env.JWT_EXPIRATION_TIME as string, 10),
   EMAIL_HOST: process.env.EMAIL_HOST as string,
