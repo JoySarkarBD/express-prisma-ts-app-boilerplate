@@ -58,7 +58,7 @@ export const validateId = (req: Request, res: Response, next: NextFunction) => {
  */
 export const validateIds = (req: Request, res: Response, next: NextFunction) => {
   // Validate request body
-  const { success, error } = zodIdSchema.pick({ ids: true }).safeParse(req.body);
+  const { success, error } = zodIdSchema.pick({ ids: true }).safeParse({ ids: req.body.ids });
 
   // Check if validation was successful
   if (!success) {
