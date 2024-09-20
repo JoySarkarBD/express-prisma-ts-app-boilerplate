@@ -41,7 +41,8 @@ const logModuleRoutes = (moduleName: string, moduleRoutes: any[]) => {
     );
   });
   console.log(
-    `${WHITE}======================= End: ${moduleName} ========================${RESET}
+    `
+    ${WHITE}======================= End: ${moduleName} ========================${RESET}
     
   `
   );
