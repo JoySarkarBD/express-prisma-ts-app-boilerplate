@@ -52,7 +52,7 @@ app.use(limiter);
 app.use(express.static(publicDirPath));
 
 // Recursive function to load routes from nested folders
-export const routes: { path: string; method: string; time: number }[] = [];
+export const routes: { module: string; path: string; method: string; time: number }[] = [];
 
 const loadRoutes = (basePath: string, baseRoute: string) => {
   if (fs.existsSync(basePath)) {
@@ -85,6 +85,7 @@ const loadRoutes = (basePath: string, baseRoute: string) => {
               );
               methods.forEach((method) => {
                 routes.push({
+                  module: item.split('.')[0],
                   path: `${baseRoute}${layer.route.path}`,
                   method,
                   time: loadTime,

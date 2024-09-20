@@ -28,6 +28,25 @@ const getFormattedTime = () => {
   return `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}:${String(now.getSeconds()).padStart(2, '0')}`;
 };
 
+// Function to log routes for each module with the specified format
+const logModuleRoutes = (moduleName: string, moduleRoutes: any[]) => {
+  console.log(
+    `${WHITE}======================= Start: ${moduleName} ======================${RESET}
+`
+  );
+  moduleRoutes.forEach((route) => {
+    const routeInfo = `${GREEN}${route.method} ${route.path} - ${YELLOW}${route.time.toFixed(2)} ms${RESET}`;
+    console.log(
+      `${GREEN}[Express] ${WHITE}${getFormattedDate()} ${getFormattedTime()} ${GREEN}LOG ${YELLOW}[RouterExplorer] ${routeInfo}`
+    );
+  });
+  console.log(
+    `${WHITE}======================= End: ${moduleName} ========================${RESET}
+    
+  `
+  );
+};
+
 // Main function to start the server and connect to the database
 async function main() {
   try {
@@ -40,15 +59,25 @@ async function main() {
 
     // Test Prisma Client connection
     await prismaClient.$connect();
-    console.log(`${GREEN}[Express] ${BLUE}[Database] ${RESET}Database connected successfully`);
+    console.log(`${GREEN}[Express] ${BLUE}[Database] ${RESET}Database connected successfully
+`);
 
-    // Log routes in development mode
-    if (config.NODE_ENV === 'development') {
+    // Log routes in any mode except production
+    if (config.NODE_ENV !== 'production') {
+      const modulesGroupedRoutes: { [key: string]: any[] } = {};
+
+      // Group routes by module for organized logging
       routes.forEach((route) => {
-        const routeInfo = `${GREEN}${route.method} ${route.path} - ${YELLOW}${route.time.toFixed(2)} ms${RESET}`;
-        console.log(
-          `${GREEN}[Express] ${WHITE}${getFormattedDate()} ${getFormattedTime()} ${GREEN}LOG ${YELLOW}[RouterExplorer] ${routeInfo}`
-        );
+        const moduleName = route.module;
+        if (!modulesGroupedRoutes[moduleName]) {
+          modulesGroupedRoutes[moduleName] = [];
+        }
+        modulesGroupedRoutes[moduleName].push(route);
+      });
+
+      // Log each module's routes
+      Object.keys(modulesGroupedRoutes).forEach((moduleName) => {
+        logModuleRoutes(moduleName, modulesGroupedRoutes[moduleName]);
       });
     }
   } catch (error) {
