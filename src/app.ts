@@ -60,15 +60,15 @@ const loadRoutes = (basePath: string, baseRoute: string) => {
       const itemPath = path.join(basePath, item);
       const routePrefix = `${baseRoute}/${item.replace('.route', '')}`;
 
+      // Measure the loading time of each route
+      const start = performance.now();
+
       if (fs.statSync(itemPath).isDirectory()) {
         // Recursively load routes for nested folders
         loadRoutes(itemPath, routePrefix);
       } else if (item.endsWith('.route.ts') || item.endsWith('.route.js')) {
         // Dynamically load the route file
         app.use(baseRoute, require(itemPath));
-
-        // Measure the loading time of each route
-        const start = performance.now();
 
         // Dynamically load the route file
         const routeModule = require(itemPath);
