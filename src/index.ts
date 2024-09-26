@@ -53,9 +53,15 @@ async function main() {
   try {
     // Start the server
     server = app.listen(config.PORT, () => {
-      console.log(
-        `${GREEN}[Express] ${BLUE}[Server] ${RESET}Server running at ${YELLOW}http://localhost:${config.PORT}${RESET}`
-      );
+      if (config.NODE_ENV !== 'production') {
+        console.log(
+          `${GREEN}[Express] ${BLUE}[Server] ${RESET}Server running at ${YELLOW}${config.BASE_URL}:${config.PORT}${RESET}`
+        );
+      } else {
+        console.log(
+          `${GREEN}[Express] ${BLUE}[Server] ${RESET}Server running at ${YELLOW}${config.BASE_URL}${RESET}`
+        );
+      }
     });
 
     // Test Prisma Client connection

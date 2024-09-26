@@ -13,12 +13,10 @@
     "prettier": "prettier --check 'src/**/*.{ts,tsx}'",
     "prettier:fix": "prettier --write 'src/**/*.{ts,tsx}'",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "resource": "node ./.bin/cli.js resource",
-    "resource:nested": "node ./.bin/cli.js nested-resource"
+    "resource": "node ./.bin/cli.js resource"
   },
   "bin": {
-    "resource": "./bin/cli.js",
-    "resource:nested": "./bin/cli.js"
+    "resource": "./bin/cli.js"
   },
   "keywords": [
     "typescript",

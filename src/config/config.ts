@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 interface Config {
+  BASE_URL: string;
   PORT: number;
   DB_CONNECTION_URI: string;
   NODE_ENV: string;
@@ -23,6 +24,7 @@ interface Config {
 }
 
 const config: Config = {
+  BASE_URL: process.env.BASE_URL as string,
   PORT: parseInt(process.env.PORT as string, 10),
   DB_CONNECTION_URI: process.env.DB_CONNECTION_URI as string,
   NODE_ENV: process.env.NODE_ENV as string,
