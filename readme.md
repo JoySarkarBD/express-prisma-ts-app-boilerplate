@@ -68,13 +68,12 @@ To get started with Prisma, initialize it in your project. This step creates a `
 
 #### 2. Configure Prisma Schema
 
-Open the `prisma/schema.prisma` file and define your data models. For example, to define a `User` model, you might use the following configuration:
+Open the `prisma/schema.prisma` file and define your data models. For example, to define a `Blog` model, you might use the following configuration:
 
 ```prisma
-model User {
-  id    String @id @default(cuid())
-  name  String
-  email String @unique
+model Blog {
+  id     String @id @default(cuid())
+  title  String
   // Add other fields as needed
 }
 ```
@@ -157,43 +156,43 @@ pnpm run resource <resource-name>
 
 ### Example
 
-To generate files for a resource named `user`, run:
+To generate files for a resource named `blog`, run:
 
 ```bash
-npm run resource user
+npm run resource blog
 ```
 
 This will create the following files:
 
-- **Controller File**: `src/modules/user/user.controller.ts`
-- **Route File**: `src/modules/user/user.route.ts`
-- **Service File**: `src/modules/user/user.service.ts`
-- **Validation File**: `src/modules/user/user.validation.ts`
+- **Controller File**: `src/modules/blog/blog.controller.ts`
+- **Route File**: `src/modules/blog/blog.route.ts`
+- **Service File**: `src/modules/blog/blog.service.ts`
+- **Validation File**: `src/modules/blog/blog.validation.ts`
 
 ## File Structure
 
-### Controller File (`user.controller.ts`)
+### Controller File (`blog.controller.ts`)
 
 Contains controller functions for handling HTTP requests, including:
 
-- `createUser`
-- `createManyUsers`
-- `updateUser`
-- `updateManyUsers`
-- `deleteUser`
-- `deleteManyUsers`
-- `getUserById`
-- `getManyUsers`
+- `createBlog`
+- `createManyBlogs`
+- `updateBlog`
+- `updateManyBlogs`
+- `deleteBlog`
+- `deleteManyBlogs`
+- `getBlogById`
+- `getManyBlogs`
 
-### Route File (`user.route.ts`)
+### Route File (`blog.route.ts`)
 
 Defines RESTful routes for the resource, including endpoints for creating, updating, deleting, and retrieving resources.
 
-### Service File (`user.service.ts`)
+### Service File (`blog.service.ts`)
 
-The `user.service.ts` file contains service functions for managing user resources in the application. These functions interact with the `UserModel` to perform CRUD (Create, Read, Update, Delete) operations on user data.
+The `blog.service.ts` file contains service functions for managing blog resources in the application. These functions interact with the `BlogModel` to perform CRUD (Create, Read, Update, Delete) operations on blog data.
 
-### Validation File (`user.validation.ts`)
+### Validation File (`blog.validation.ts`)
 
 Includes Zod validation schemas and middleware functions for validating requests. The validation file ensures that IDs and other required fields are valid.
 
@@ -203,121 +202,121 @@ Includes Zod validation schemas and middleware functions for validating requests
 
 ```typescript
 import { Request, Response } from 'express';
-import { userServices } from './user.service';
+import { blogServices } from './blog.service';
 import ServerResponse from '../../helpers/responses/custom-response';
 import catchAsync from '../../utils/catch-async/catch-async';
 
 /**
- * Controller function to handle the creation of a single User.
+ * Controller function to handle the creation of a single Blog.
  *
- * @param {Request} req - The request object containing user data in the body.
+ * @param {Request} req - The request object containing blog data in the body.
  * @param {Response} res - The response object used to send the response.
  * @returns {void}
  */
-export const createUser = catchAsync(async (req: Request, res: Response) => {
-  // Call the service method to create a new user and get the result
-  const result = await userServices.createUser(req.body);
+export const createBlog = catchAsync(async (req: Request, res: Response) => {
+  // Call the service method to create a new blog and get the result
+  const result = await blogServices.createBlog(req.body);
   // Send a success response with the created resource data
-  ServerResponse(res, true, 201, 'User created successfully', result);
+  ServerResponse(res, true, 201, 'Blog created successfully', result);
 });
 
 /**
- * Controller function to handle the creation of multiple user.
+ * Controller function to handle the creation of multiple blog.
  *
- * @param {Request} req - The request object containing an array of user data in the body.
+ * @param {Request} req - The request object containing an array of blog data in the body.
  * @param {Response} res - The response object used to send the response.
  * @returns {void}
  */
-export const createManyUser = catchAsync(async (req: Request, res: Response) => {
-  // Call the service method to create multiple users and get the result
-  const result = await userServices.createManyUser(req.body);
+export const createManyBlog = catchAsync(async (req: Request, res: Response) => {
+  // Call the service method to create multiple blogs and get the result
+  const result = await blogServices.createManyBlog(req.body);
   // Send a success response with the created resources data
   ServerResponse(res, true, 201, 'Resources created successfully', result);
 });
 
 /**
- * Controller function to handle the update operation for a single user.
+ * Controller function to handle the update operation for a single blog.
  *
- * @param {Request} req - The request object containing the ID of the user to update in URL parameters and the updated data in the body.
+ * @param {Request} req - The request object containing the ID of the blog to update in URL parameters and the updated data in the body.
  * @param {Response} res - The response object used to send the response.
  * @returns {void}
  */
-export const updateUser = catchAsync(async (req: Request, res: Response) => {
+export const updateBlog = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  // Call the service method to update the user by ID and get the result
-  const result = await userServices.updateUser(id, req.body);
+  // Call the service method to update the blog by ID and get the result
+  const result = await blogServices.updateBlog(id, req.body);
   // Send a success response with the updated resource data
-  ServerResponse(res, true, 200, 'User updated successfully', result);
+  ServerResponse(res, true, 200, 'Blog updated successfully', result);
 });
 
 /**
- * Controller function to handle the update operation for multiple user.
+ * Controller function to handle the update operation for multiple blog.
  *
- * @param {Request} req - The request object containing an array of user data in the body.
+ * @param {Request} req - The request object containing an array of blog data in the body.
  * @param {Response} res - The response object used to send the response.
  * @returns {void}
  */
-export const updateManyUser = catchAsync(async (req: Request, res: Response) => {
-  // Call the service method to update multiple user and get the result
-  const result = await userServices.updateManyUser(req.body);
+export const updateManyBlog = catchAsync(async (req: Request, res: Response) => {
+  // Call the service method to update multiple blog and get the result
+  const result = await blogServices.updateManyBlog(req.body);
   // Send a success response with the updated resources data
   ServerResponse(res, true, 200, 'Resources updated successfully', result);
 });
 
 /**
- * Controller function to handle the deletion of a single user.
+ * Controller function to handle the deletion of a single blog.
  *
- * @param {Request} req - The request object containing the ID of the user to delete in URL parameters.
+ * @param {Request} req - The request object containing the ID of the blog to delete in URL parameters.
  * @param {Response} res - The response object used to send the response.
  * @returns {void}
  */
-export const deleteUser = catchAsync(async (req: Request, res: Response) => {
+export const deleteBlog = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  // Call the service method to delete the user by ID
-  await userServices.deleteUser(id);
+  // Call the service method to delete the blog by ID
+  await blogServices.deleteBlog(id);
   // Send a success response confirming the deletion
-  ServerResponse(res, true, 200, 'User deleted successfully');
+  ServerResponse(res, true, 200, 'Blog deleted successfully');
 });
 
 /**
- * Controller function to handle the deletion of multiple user.
+ * Controller function to handle the deletion of multiple blog.
  *
- * @param {Request} req - The request object containing an array of IDs of user to delete in the body.
+ * @param {Request} req - The request object containing an array of IDs of blog to delete in the body.
  * @param {Response} res - The response object used to send the response.
  * @returns {void}
  */
-export const deleteManyUser = catchAsync(async (req: Request, res: Response) => {
-  // Call the service method to delete multiple user and get the result
-  await userServices.deleteManyUser(req.body);
+export const deleteManyBlog = catchAsync(async (req: Request, res: Response) => {
+  // Call the service method to delete multiple blog and get the result
+  await blogServices.deleteManyBlog(req.body);
   // Send a success response confirming the deletions
   ServerResponse(res, true, 200, 'Resources deleted successfully');
 });
 
 /**
- * Controller function to handle the retrieval of a single user by ID.
+ * Controller function to handle the retrieval of a single blog by ID.
  *
- * @param {Request} req - The request object containing the ID of the user to retrieve in URL parameters.
+ * @param {Request} req - The request object containing the ID of the blog to retrieve in URL parameters.
  * @param {Response} res - The response object used to send the response.
  * @returns {void}
  */
-export const getUserById = catchAsync(async (req: Request, res: Response) => {
+export const getBlogById = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
-  // Call the service method to get the user by ID and get the result
-  const result = await userServices.getUserById(id);
+  // Call the service method to get the blog by ID and get the result
+  const result = await blogServices.getBlogById(id);
   // Send a success response with the retrieved resource data
-  ServerResponse(res, true, 200, 'User retrieved successfully', result);
+  ServerResponse(res, true, 200, 'Blog retrieved successfully', result);
 });
 
 /**
- * Controller function to handle the retrieval of multiple user.
+ * Controller function to handle the retrieval of multiple blog.
  *
  * @param {Request} req - The request object containing query parameters for filtering.
  * @param {Response} res - The response object used to send the response.
  * @returns {void}
  */
-export const getManyUser = catchAsync(async (req: Request, res: Response) => {
-  // Call the service method to get multiple user based on query parameters and get the result
-  const result = await userServices.getManyUser(req.query);
+export const getManyBlog = catchAsync(async (req: Request, res: Response) => {
+  // Call the service method to get multiple blog based on query parameters and get the result
+  const result = await blogServices.getManyBlog(req.query);
   // Send a success response with the retrieved resources data
   ServerResponse(res, true, 200, 'Resources retrieved successfully', result);
 });
@@ -331,18 +330,18 @@ import { Router } from 'express';
 
 // Import controller from corresponding module
 import {
-  createUser,
-  createManyUser,
-  updateUser,
-  updateManyUser,
-  deleteUser,
-  deleteManyUser,
-  getUserById,
-  getManyUser,
-} from './user.controller';
+  createBlog,
+  createManyBlog,
+  updateBlog,
+  updateManyBlog,
+  deleteBlog,
+  deleteManyBlog,
+  getBlogById,
+  getManyBlog,
+} from './blog.controller';
 
 //Import validation from corresponding module
-import { validateUser } from './user.validation';
+import { validateBlog } from './blog.validation';
 import { validateId, validateIds } from '../../handlers/common-zod-validator';
 
 // Initialize router
@@ -350,78 +349,78 @@ const router = Router();
 
 // Define route handlers
 /**
- * @route POST /api/v1/user/create-user
- * @description Create a new user
+ * @route POST /api/v1/blog/create-blog
+ * @description Create a new blog
  * @access Public
- * @param {function} controller - ['createUser']
- * @param {function} validation - ['validateUser']
+ * @param {function} controller - ['createBlog']
+ * @param {function} validation - ['validateBlog']
  */
-router.post('/create-user', validateUser, createUser);
+router.post('/create-blog', validateBlog, createBlog);
 
 /**
- * @route POST /api/v1/user/create-user/many
- * @description Create multiple user
+ * @route POST /api/v1/blog/create-blog/many
+ * @description Create multiple blog
  * @access Public
- * @param {function} controller - ['createManyUser']
+ * @param {function} controller - ['createManyBlog']
  */
-router.post('/create-user/many', createManyUser);
+router.post('/create-blog/many', createManyBlog);
 
 /**
- * @route PUT /api/v1/user/update-user/many
- * @description Update multiple user information
+ * @route PUT /api/v1/blog/update-blog/many
+ * @description Update multiple blog information
  * @access Public
- * @param {function} controller - ['updateManyUser']
+ * @param {function} controller - ['updateManyBlog']
  * @param {function} validation - ['validateIds']
  */
-router.put('/update-user/many', validateIds, updateManyUser);
+router.put('/update-blog/many', validateIds, updateManyBlog);
 
 /**
- * @route PUT /api/v1/user/update-user/:id
- * @description Update user information
- * @param {string} id - The ID of the user to update
+ * @route PUT /api/v1/blog/update-blog/:id
+ * @description Update blog information
+ * @param {string} id - The ID of the blog to update
  * @access Public
- * @param {function} controller - ['updateUser']
- * @param {function} validation - ['validateId', 'validateUser']
+ * @param {function} controller - ['updateBlog']
+ * @param {function} validation - ['validateId', 'validateBlog']
  */
-router.put('/update-user/:id', validateId, validateUser, updateUser);
+router.put('/update-blog/:id', validateId, validateBlog, updateBlog);
 
 /**
- * @route DELETE /api/v1/user/delete-user/many
- * @description Delete multiple user
+ * @route DELETE /api/v1/blog/delete-blog/many
+ * @description Delete multiple blog
  * @access Public
- * @param {function} controller - ['deleteManyUser']
+ * @param {function} controller - ['deleteManyBlog']
  * @param {function} validation - ['validateIds']
  */
-router.delete('/delete-user/many', validateIds, deleteManyUser);
+router.delete('/delete-blog/many', validateIds, deleteManyBlog);
 
 /**
- * @route DELETE /api/v1/user/delete-user/:id
- * @description Delete a user
- * @param {string} id - The ID of the user to delete
+ * @route DELETE /api/v1/blog/delete-blog/:id
+ * @description Delete a blog
+ * @param {string} id - The ID of the blog to delete
  * @access Public
- * @param {function} controller - ['deleteUser']
+ * @param {function} controller - ['deleteBlog']
  * @param {function} validation - ['validateId']
  */
-router.delete('/delete-user/:id', validateId, deleteUser);
+router.delete('/delete-blog/:id', validateId, deleteBlog);
 
 /**
- * @route GET /api/v1/user/get-user/many
- * @description Get multiple user
+ * @route GET /api/v1/blog/get-blog/many
+ * @description Get multiple blog
  * @access Public
- * @param {function} controller - ['getManyUser']
+ * @param {function} controller - ['getManyBlog']
  * @param {function} validation - ['validateIds']
  */
-router.get('/get-user/many', validateIds, getManyUser);
+router.get('/get-blog/many', validateIds, getManyBlog);
 
 /**
- * @route GET /api/v1/user/get-user/:id
- * @description Get a user by ID
- * @param {string} id - The ID of the user to retrieve
+ * @route GET /api/v1/blog/get-blog/:id
+ * @description Get a blog by ID
+ * @param {string} id - The ID of the blog to retrieve
  * @access Public
- * @param {function} controller - ['getUserById']
+ * @param {function} controller - ['getBlogById']
  * @param {function} validation - ['validateId']
  */
-router.get('/get-user/:id', validateId, getUserById);
+router.get('/get-blog/:id', validateId, getBlogById);
 
 // Export the router
 module.exports = router;
@@ -436,48 +435,48 @@ import { Prisma } from '@prisma/client';
 import { prismaClient } from '../../index';
 
 /**
- * Service function to create a new user.
+ * Service function to create a new blog.
  *
- * @param data - The data to create a new user.
- * @returns {Promise<User>} - The created user.
+ * @param data - The data to create a new blog.
+ * @returns {Promise<Blog>} - The created blog.
  */
-const createUser = async (data: Prisma.UserCreateInput) => {
-  return await prismaClient.user.create({ data });
+const createBlog = async (data: Prisma.BlogCreateInput) => {
+  return await prismaClient.blog.create({ data });
 };
 
 /**
- * Service function to create multiple user.
+ * Service function to create multiple blog.
  *
- * @param data - An array of data to create multiple user.
- * @returns {Promise<User[]>} - The created user.
+ * @param data - An array of data to create multiple blog.
+ * @returns {Promise<Blog[]>} - The created blog.
  */
-const createManyUser = async (data: Prisma.UserCreateManyInput[]) => {
-  return await prismaClient.user.createMany({ data });
+const createManyBlog = async (data: Prisma.BlogCreateManyInput[]) => {
+  return await prismaClient.blog.createMany({ data });
 };
 
 /**
- * Service function to update a single user by ID.
+ * Service function to update a single blog by ID.
  *
- * @param id - The ID of the user to update.
- * @param data - The updated data for the user.
- * @returns {Promise<User>} - The updated user.
+ * @param id - The ID of the blog to update.
+ * @param data - The updated data for the blog.
+ * @returns {Promise<Blog>} - The updated blog.
  */
-const updateUser = async (id: string, data: Prisma.UserUpdateInput) => {
-  return await prismaClient.user.update({
+const updateBlog = async (id: string, data: Prisma.BlogUpdateInput) => {
+  return await prismaClient.blog.update({
     where: { id },
     data,
   });
 };
 
 /**
- * Service function to update multiple user.
+ * Service function to update multiple blog.
  *
- * @param data - An array of data to update multiple user.
- * @returns {Promise<User[]>} - The updated user.
+ * @param data - An array of data to update multiple blog.
+ * @returns {Promise<Blog[]>} - The updated blog.
  */
-const updateManyUser = async (data: { id: string; updates: Prisma.UserUpdateInput }[]) => {
+const updateManyBlog = async (data: { id: string; updates: Prisma.BlogUpdateInput }[]) => {
   const updatePromises = data.map(({ id, updates }) =>
-    prismaClient.user.update({
+    prismaClient.blog.update({
       where: { id },
       data: updates,
     })
@@ -486,25 +485,25 @@ const updateManyUser = async (data: { id: string; updates: Prisma.UserUpdateInpu
 };
 
 /**
- * Service function to delete a single user by ID.
+ * Service function to delete a single blog by ID.
  *
- * @param id - The ID of the user to delete.
- * @returns {Promise<User>} - The deleted user.
+ * @param id - The ID of the blog to delete.
+ * @returns {Promise<Blog>} - The deleted blog.
  */
-const deleteUser = async (id: string) => {
-  return await prismaClient.user.delete({
+const deleteBlog = async (id: string) => {
+  return await prismaClient.blog.delete({
     where: { id },
   });
 };
 
 /**
- * Service function to delete multiple user.
+ * Service function to delete multiple blog.
  *
- * @param ids - An array of IDs of user to delete.
- * @returns {Promise<User[]>} - The deleted user.
+ * @param ids - An array of IDs of blog to delete.
+ * @returns {Promise<Blog[]>} - The deleted blog.
  */
-const deleteManyUser = async (ids: string[]) => {
-  return await prismaClient.user.deleteMany({
+const deleteManyBlog = async (ids: string[]) => {
+  return await prismaClient.blog.deleteMany({
     where: {
       id: { in: ids },
     },
@@ -512,38 +511,38 @@ const deleteManyUser = async (ids: string[]) => {
 };
 
 /**
- * Service function to retrieve a single user by ID.
+ * Service function to retrieve a single blog by ID.
  *
- * @param id - The ID of the user to retrieve.
- * @returns {Promise<User>} - The retrieved user.
+ * @param id - The ID of the blog to retrieve.
+ * @returns {Promise<Blog>} - The retrieved blog.
  */
-const getUserById = async (id: string) => {
-  return await prismaClient.user.findUnique({
+const getBlogById = async (id: string) => {
+  return await prismaClient.blog.findUnique({
     where: { id },
   });
 };
 
 /**
- * Service function to retrieve multiple user based on query parameters.
+ * Service function to retrieve multiple blog based on query parameters.
  *
- * @param query - The query parameters for filtering user.
- * @returns {Promise<User[]>} - The retrieved user.
+ * @param query - The query parameters for filtering blog.
+ * @returns {Promise<Blog[]>} - The retrieved blog.
  */
-const getManyUser = async (query: Prisma.UserWhereInput) => {
-  return await prismaClient.user.findMany({
+const getManyBlog = async (query: Prisma.BlogWhereInput) => {
+  return await prismaClient.blog.findMany({
     where: query,
   });
 };
 
-export const userServices = {
-  createUser,
-  createManyUser,
-  updateUser,
-  updateManyUser,
-  deleteUser,
-  deleteManyUser,
-  getUserById,
-  getManyUser,
+export const blogServices = {
+  createBlog,
+  createManyBlog,
+  updateBlog,
+  updateManyBlog,
+  deleteBlog,
+  deleteManyBlog,
+  getBlogById,
+  getManyBlog,
 };
 ```
 
@@ -555,24 +554,24 @@ import { z } from 'zod';
 import zodErrorHandler from '../../handlers/zod-error-handler';
 
 /**
- * Zod schema for validating user data.
+ * Zod schema for validating blog data.
  */
-const zodUserSchema = z
+const zodBlogSchema = z
   .object({
     // Define schema fields here
   })
   .strict();
 
 /**
- * Middleware function to validate user using Zod schema.
+ * Middleware function to validate blog using Zod schema.
  * @param {object} req - The request object.
  * @param {object} res - The response object.
  * @param {function} next - The next middleware function.
  * @returns {void}
  */
-export const validateUser = (req: Request, res: Response, next: NextFunction) => {
+export const validateBlog = (req: Request, res: Response, next: NextFunction) => {
   // Validate request body
-  const { error, success } = zodUserSchema.safeParse(req.body);
+  const { error, success } = zodBlogSchema.safeParse(req.body);
 
   // Check if validation was successful
   if (!success) {
@@ -587,34 +586,10 @@ export const validateUser = (req: Request, res: Response, next: NextFunction) =>
 
 ---
 
-### Nested CLI Commands
-
-The CLI tool can be executed using the following command(nested resource):
-
-**By using npm**:
-
-```bash
-npm run resource:nested folder1/folder2/<resource-name>
-```
-
-**By using yarn**:
-
-```bash
-yarn run resource:nested folder1/folder2/<resource-name>
-```
-
-**By using pnpm**:
-
-```bash
-pnpm run resource:nested folder1/folder2/<resource-name>
-```
-
 **It will act same like the previous command but it will generate the resources as nested you want.**
 
 ## Contact
 
 For any questions or feedback, please contact [JoySarkar] at [developer.joysarkar@gmail.com].
-
----
 
 Feel free to adjust any sections to better fit your project's specifics or personal preferences!
