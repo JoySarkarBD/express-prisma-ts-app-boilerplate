@@ -5,6 +5,7 @@ const [, , command, ...args] = process.argv;
 const fs = require('fs');
 const path = require('path');
 const { program } = require('commander');
+const readline = require('readline');
 
 // Define color codes for console output
 const GREEN = '\x1b[32m'; // Green color
@@ -48,23 +49,6 @@ if (command === 'resource') {
 
       // Path to the route directory
       const routeDir = path.join(__dirname, '..', 'src', 'modules', args[0]);
-      // Path to the controller directory
-      const controllerDir = path.join(__dirname, '..', 'src', 'modules', args[0]);
-      // Path to the model directory
-      const validationDir = path.join(__dirname, '..', 'src', 'modules', args[0]);
-      // Path to the service directory
-      const serviceDir = path.join(__dirname, '..', 'src', 'modules', args[0]);
-
-      // Function to format file paths relative to project root
-      const formatPath = (filePath) => path.relative(path.join(__dirname, '..'), filePath);
-
-      // Create the resource directories if they don't exist
-      [routeDir, controllerDir].forEach((dir) => {
-        if (!fs.existsSync(dir)) {
-          fs.mkdirSync(dir, { recursive: true });
-        }
-      });
-
       // Create route file content
       const routeContent = `
 // Import Router from express
@@ -167,12 +151,11 @@ router.get("/get-${args[0]}/:id", validateId, get${capitalizedResourceName}ById)
 // Export the router
 module.exports = router;
     `;
-
       // Path to the route file
       const routeFilePath = path.join(routeDir, `${args[0]}.route.ts`);
-      // Write content to the route file
-      fs.writeFileSync(routeFilePath, routeContent.trim());
 
+      // Path to the controller directory
+      const controllerDir = path.join(__dirname, '..', 'src', 'modules', args[0]);
       // Create controller file content
       const controllerContent = `
 import { Request, Response } from 'express';
@@ -295,12 +278,11 @@ export const getMany${capitalizedResourceName} = catchAsync(async (req: Request,
   ServerResponse(res, true, 200, 'Resources retrieved successfully', result);
 });
     `;
-
       // Path to the controller file
       const controllerFilePath = path.join(controllerDir, `${args[0]}.controller.ts`);
-      // Write content to the controller file
-      fs.writeFileSync(controllerFilePath, controllerContent.trim());
 
+      // Path to the model directory
+      const validationDir = path.join(__dirname, '..', 'src', 'modules', args[0]);
       // Create Zod validation schema content
       const validationContent = `
 import { NextFunction, Request, Response } from 'express';
@@ -335,12 +317,11 @@ export const validate${capitalizedResourceName} = (req: Request, res: Response, 
   return next();
 };
     `;
-
       // Path to the zod validation file
       const validationFilePath = path.join(validationDir, `${args[0]}.validation.ts`);
-      // Write content to the validation file
-      fs.writeFileSync(validationFilePath, validationContent.trim());
 
+      // Path to the service directory
+      const serviceDir = path.join(__dirname, '..', 'src', 'modules', args[0]);
       // Create service content
       const serviceContent = `
 import { Prisma } from '@prisma/client';
@@ -459,37 +440,152 @@ export const ${resourceName}Services = {
   getMany${capitalizedResourceName},
 };
     `;
-
       // Path to the service file
       const serviceFilePath = path.join(serviceDir, `${args[0]}.service.ts`);
-      // Write content to the service file
-      fs.writeFileSync(serviceFilePath, serviceContent.trim());
 
-      // Log the creation of the controller, interface, model , route, service & validation files
-      console.log(
-        `${GREEN}CREATE ${RESET}${formatPath(
-          controllerFilePath
-        )} ${BLUE}(${Buffer.byteLength(controllerContent, 'utf8')} bytes)`
-      );
-      console.log(
-        `${GREEN}CREATE ${RESET}${formatPath(
-          routeFilePath
-        )} ${BLUE}(${Buffer.byteLength(routeContent, 'utf8')} bytes)`
-      );
-      console.log(
-        `${GREEN}CREATE ${RESET}${formatPath(
-          serviceFilePath
-        )} ${BLUE}(${Buffer.byteLength(serviceContent, 'utf8')} bytes)`
-      );
-      console.log(
-        `${GREEN}CREATE ${RESET}${formatPath(
-          validationFilePath
-        )} ${BLUE}(${Buffer.byteLength(validationContent, 'utf8')} bytes)`
-      );
+      // Function to format file paths relative to project root
+      const formatPath = (filePath) => path.relative(path.join(__dirname, '..'), filePath);
+
+      // Create the resource directories if they don't exist
+      [routeDir, controllerDir].forEach((dir) => {
+        if (!fs.existsSync(dir)) {
+          fs.mkdirSync(dir, { recursive: true });
+        }
+      });
+
+      // Function to generate expected files based on the module name
+      function getExpectedFiles(moduleName) {
+        return [
+          `${moduleName}.controller.ts`,
+          `${moduleName}.route.ts`,
+          `${moduleName}.service.ts`,
+          `${moduleName}.validation.ts`,
+        ];
+      }
+
+      // Function to ask questions in the command line
+      function askQuestion(rl, question) {
+        return new Promise((resolve) => {
+          rl.question(question, resolve);
+        });
+      }
+
+      // Function to search the search files and create theme
+      async function searchFile(dir, moduleName) {
+        const files = fs.readdirSync(dir);
+        const capitalizedResourceName = capitalize(moduleName);
+
+        const rl = readline.createInterface({
+          input: process.stdin,
+          output: process.stdout,
+        });
+
+        try {
+          for (const module of files) {
+            const modulePath = path.join(dir, module);
+
+            if (module === moduleName) {
+              const stat = fs.statSync(modulePath);
+
+              if (stat.isDirectory()) {
+                const foundFiles = fs.readdirSync(modulePath);
+                const expectedFiles = getExpectedFiles(moduleName);
+                const missingFiles = expectedFiles.filter((file) => !foundFiles.includes(file));
+
+                if (missingFiles.length === 0) {
+                  console.log(`${GREEN}${capitalizedResourceName} ${RESET}module already exists.`);
+                } else if (missingFiles.length > 0 && missingFiles.length < expectedFiles.length) {
+                  console.log(
+                    `${GREEN}${capitalizedResourceName} ${RESET}module exists, but some files are missing:`
+                  );
+                  missingFiles.forEach((file, index) => console.log(`${index + 1}. ${file}`));
+
+                  const answer = await askQuestion(
+                    rl,
+                    'Do you want to create missing files one by one (1) or all at once (2)? Enter 1 or 2: '
+                  );
+
+                  if (answer === '1') {
+                    for (const file of missingFiles) {
+                      const createFile = await askQuestion(
+                        rl,
+                        `Do you want to create ${file}? (yes/no) `
+                      );
+                      if (createFile.toLowerCase() === 'yes' || createFile.toLowerCase() === 'y') {
+                        await createSingleFile(modulePath, file, moduleName);
+                      }
+                    }
+                  } else if (answer === '2') {
+                    await createAllFiles(modulePath, missingFiles, moduleName);
+                  } else {
+                    console.log('Invalid option. No files will be created.');
+                  }
+                } else {
+                  await createAllFiles(modulePath, missingFiles, moduleName);
+                }
+
+                return true;
+              }
+            }
+          }
+          return false;
+        } finally {
+          rl.close();
+        }
+      }
+
+      // Function to create single resource file
+      async function createSingleFile(modulePath, file, moduleName) {
+        const filePath = path.join(modulePath, file);
+        let content;
+
+        switch (file) {
+          case `${moduleName}.route.ts`:
+            content = routeContent;
+            break;
+          case `${moduleName}.controller.ts`:
+            content = controllerContent;
+            break;
+          case `${moduleName}.validation.ts`:
+            content = validationContent;
+            break;
+          case `${moduleName}.service.ts`:
+            content = serviceContent;
+            break;
+        }
+
+        fs.writeFileSync(filePath, content.trim());
+        console.log(
+          `${GREEN}CREATE ${RESET}${formatPath(filePath)} ${BLUE}(${Buffer.byteLength(content, 'utf8')} bytes)`
+        );
+      }
+
+      // Function to create all resources files
+      async function createAllFiles(modulePath, missingFiles, moduleName) {
+        for (const file of missingFiles) {
+          await createSingleFile(modulePath, file, moduleName);
+        }
+      }
+
+      // Entry point
+      (async () => {
+        const moduleName = args[0];
+        const srcPath = path.join(process.cwd(), 'src', 'modules');
+
+        if (!moduleName) {
+          console.log('Please provide a module name.');
+          return;
+        }
+
+        const found = await searchFile(srcPath, moduleName);
+        if (!found) {
+          console.log(`Module ${moduleName} not found.`);
+        }
+      })();
     });
 
   program.parse(process.argv);
-}else {
+} else {
   console.error(`Unknown command: ${command}`);
   process.exit(1);
 }
