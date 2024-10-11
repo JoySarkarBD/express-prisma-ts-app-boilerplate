@@ -8,6 +8,7 @@ const { program } = require('commander');
 const readline = require('readline');
 
 // Define color codes for console output
+const RED = '\x1b[31m'; // Red color
 const GREEN = '\x1b[32m'; // Green color
 const BLUE = '\x1b[34m'; // Blue color
 const RESET = '\x1b[0m'; // Reset color
@@ -493,23 +494,25 @@ export const ${resourceName}Services = {
                 const missingFiles = expectedFiles.filter((file) => !foundFiles.includes(file));
 
                 if (missingFiles.length === 0) {
-                  console.log(`${GREEN}${capitalizedResourceName} ${RESET}module already exists.`);
+                  console.log(`${RED}${capitalizedResourceName} module already exists.${RESET}`);
                 } else if (missingFiles.length > 0 && missingFiles.length < expectedFiles.length) {
                   console.log(
                     `${GREEN}${capitalizedResourceName} ${RESET}module exists, but some files are missing:`
                   );
-                  missingFiles.forEach((file, index) => console.log(`${index + 1}. ${file}`));
+                  missingFiles.forEach((file, index) =>
+                    console.log(`${GREEN}${index + 1}. ${file}${RESET}`)
+                  );
 
                   const answer = await askQuestion(
                     rl,
-                    'Do you want to create missing files one by one (1) or all at once (2)? Enter 1 or 2: '
+                    `${BLUE}Do you want to create missing files one by one (1) or all at once (2)?${RESET} Enter 1 or 2: `
                   );
 
                   if (answer === '1') {
                     for (const file of missingFiles) {
                       const createFile = await askQuestion(
                         rl,
-                        `Do you want to create ${file}? (yes/no) `
+                        `${BLUE}Do you want to create ${GREEN}${file}?${RESET} (yes/no) `
                       );
                       if (createFile.toLowerCase() === 'yes' || createFile.toLowerCase() === 'y') {
                         await createSingleFile(modulePath, file, moduleName);
@@ -518,7 +521,7 @@ export const ${resourceName}Services = {
                   } else if (answer === '2') {
                     await createAllFiles(modulePath, missingFiles, moduleName);
                   } else {
-                    console.log('Invalid option. No files will be created.');
+                    console.log(`${RED}Invalid option. No files will be created.${RESET}`);
                   }
                 } else {
                   await createAllFiles(modulePath, missingFiles, moduleName);
@@ -556,7 +559,7 @@ export const ${resourceName}Services = {
 
         fs.writeFileSync(filePath, content.trim());
         console.log(
-          `${GREEN}CREATE ${RESET}${formatPath(filePath)} ${BLUE}(${Buffer.byteLength(content, 'utf8')} bytes)`
+          `${GREEN}CREATE ${RESET}${formatPath(filePath)} ${BLUE}(${Buffer.byteLength(content, 'utf8')} bytes)${RESET}`
         );
       }
 
@@ -573,13 +576,13 @@ export const ${resourceName}Services = {
         const srcPath = path.join(process.cwd(), 'src', 'modules');
 
         if (!moduleName) {
-          console.log('Please provide a module name.');
+          console.log(`${RED}Please provide a module name.${RESET}`);
           return;
         }
 
         const found = await searchFile(srcPath, moduleName);
         if (!found) {
-          console.log(`Module ${moduleName} not found.`);
+          console.log(`${RED}Module ${moduleName} not found.${RESET}`);
         }
       })();
     });
