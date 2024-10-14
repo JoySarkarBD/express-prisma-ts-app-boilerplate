@@ -505,10 +505,10 @@ export const ${resourceName}Services = {
 
                   const answer = await askQuestion(
                     rl,
-                    `${BLUE}Do you want to create missing files one by one (1) or all at once (2)?${RESET} Enter 1 or 2: `
+                    `${BLUE}Do you want to create missing files one by one (Yes/Y) or all at once (Create/C)?${RESET} Enter (Yes/Y) or (Create/C): `
                   );
 
-                  if (answer === '1') {
+                  if (answer.toLowerCase() === 'yes' || answer.toLowerCase() === 'y') {
                     for (const file of missingFiles) {
                       const createFile = await askQuestion(
                         rl,
@@ -518,7 +518,7 @@ export const ${resourceName}Services = {
                         await createSingleFile(modulePath, file, moduleName);
                       }
                     }
-                  } else if (answer === '2') {
+                  } else if (answer.toLowerCase() === 'create' || answer.toLowerCase() === 'c') {
                     await createAllFiles(modulePath, missingFiles, moduleName);
                   } else {
                     console.log(`${RED}Invalid option. No files will be created.${RESET}`);
