@@ -131,13 +131,13 @@ router.delete("/delete-${args[0]}/many", validateIds, deleteMany${capitalizedRes
 router.delete("/delete-${args[0]}/:id", validateId, delete${capitalizedResourceName});
 
 /**
- * @route GET /api/v1/${args[0]}/get-${args[0]}/many
+ * @route POST /api/v1/${args[0]}/get-${args[0]}/many
  * @description Get multiple ${args[0]}
  * @access Public
  * @param {function} controller - ['getMany${capitalizedResourceName}']
  * @param {function} validation - ['validateIds']
  */
-router.get("/get-${args[0]}/many", validateIds, getMany${capitalizedResourceName});
+router.post("/get-${args[0]}/many", validateIds, getMany${capitalizedResourceName});
 
 /**
  * @route GET /api/v1/${args[0]}/get-${args[0]}/:id

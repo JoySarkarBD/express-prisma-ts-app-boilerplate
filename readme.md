@@ -404,13 +404,13 @@ router.delete('/delete-blog/many', validateIds, deleteManyBlog);
 router.delete('/delete-blog/:id', validateId, deleteBlog);
 
 /**
- * @route GET /api/v1/blog/get-blog/many
+ * @route POST /api/v1/blog/get-blog/many
  * @description Get multiple blog
  * @access Public
  * @param {function} controller - ['getManyBlog']
  * @param {function} validation - ['validateIds']
  */
-router.get('/get-blog/many', validateIds, getManyBlog);
+router.post('/get-blog/many', validateIds, getManyBlog);
 
 /**
  * @route GET /api/v1/blog/get-blog/:id

@@ -77,13 +77,13 @@ router.delete("/delete-user/many", validateIds, deleteManyUser);
 router.delete("/delete-user/:id", validateId, deleteUser);
 
 /**
- * @route GET /api/v1/user/get-user/many
+ * @route POST /api/v1/user/get-user/many
  * @description Get multiple user
  * @access Public
  * @param {function} controller - ['getManyUser']
  * @param {function} validation - ['validateIds']
  */
-router.get("/get-user/many", validateIds, getManyUser);
+router.post("/get-user/many", validateIds, getManyUser);
 
 /**
  * @route GET /api/v1/user/get-user/:id
