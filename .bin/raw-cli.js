@@ -68,7 +68,7 @@ import {
 } from './${args[0]}.controller';
 
 //Import validation from corresponding module
-import { validate${capitalizedResourceName} } from './${args[0]}.validation';
+import { validateCreate${capitalizedResourceName}, validateCreateMany${capitalizedResourceName}, validateUpdate${capitalizedResourceName}, validateUpdateMany${capitalizedResourceName}} from './${args[0]}.validation';
 import { validateId, validateIds } from '../../handlers/common-zod-validator';
 
 // Initialize router
@@ -80,26 +80,27 @@ const router = Router();
  * @description Create a new ${args[0]}
  * @access Public
  * @param {function} controller - ['create${capitalizedResourceName}']
- * @param {function} validation - ['validate${capitalizedResourceName}']
+ * @param {function} validation - ['validateCreate${capitalizedResourceName}']
  */
-router.post("/create-${args[0]}", validate${capitalizedResourceName}, create${capitalizedResourceName});
+router.post("/create-${args[0]}", validateCreate${capitalizedResourceName}, create${capitalizedResourceName});
 
 /**
  * @route POST /api/v1/${args[0]}/create-${args[0]}/many
  * @description Create multiple ${args[0]}
  * @access Public
  * @param {function} controller - ['createMany${capitalizedResourceName}']
+ * @param {function} validation - ['validateCreateMany${capitalizedResourceName}']
  */
-router.post("/create-${args[0]}/many", createMany${capitalizedResourceName});
+router.post("/create-${args[0]}/many", validateCreateMany${capitalizedResourceName}, createMany${capitalizedResourceName});
 
 /**
  * @route PUT /api/v1/${args[0]}/update-${args[0]}/many
  * @description Update multiple ${args[0]} information
  * @access Public
  * @param {function} controller - ['updateMany${capitalizedResourceName}']
- * @param {function} validation - ['validateIds']
+ * @param {function} validation - ['validateIds', 'validateUpdateMany${capitalizedResourceName}']
  */
-router.put("/update-${args[0]}/many", validateIds, updateMany${capitalizedResourceName});
+router.put("/update-${args[0]}/many", validateIds, validateUpdateMany${capitalizedResourceName}, updateMany${capitalizedResourceName});
 
 /**
  * @route PUT /api/v1/${args[0]}/update-${args[0]}/:id
@@ -107,9 +108,9 @@ router.put("/update-${args[0]}/many", validateIds, updateMany${capitalizedResour
  * @param {string} id - The ID of the ${args[0]} to update
  * @access Public
  * @param {function} controller - ['update${capitalizedResourceName}']
- * @param {function} validation - ['validateId', 'validate${capitalizedResourceName}']
+ * @param {function} validation - ['validateId', 'validateUpdate${capitalizedResourceName}']
  */
-router.put("/update-${args[0]}/:id", validateId, validate${capitalizedResourceName}, update${capitalizedResourceName});
+router.put("/update-${args[0]}/:id", validateId, validateUpdate${capitalizedResourceName}, update${capitalizedResourceName});
 
 /**
  * @route DELETE /api/v1/${args[0]}/delete-${args[0]}/many
@@ -291,30 +292,101 @@ import { z } from 'zod';
 import zodErrorHandler from '../../handlers/zod-error-handler';
 
 /**
- * Zod schema for validating ${resourceName} data.
+ * Zod schema for validating ${resourceName} data during creation.
  */
-const zod${capitalizedResourceName}Schema = z.object({
- // Define schema fields here
+const zodCreate${capitalizedResourceName}Schema = z.object({
+  // Define fields required for creating a new ${resourceName}.
+  // Example:
+  // filedName: z.string({ required_error: 'Please provide a filedName.' }).min(1, "cannot be empty."),
 }).strict();
 
 /**
- * Middleware function to validate ${resourceName} using Zod schema.
- * @param {object} req - The request object.
- * @param {object} res - The response object.
- * @param {function} next - The next middleware function.
+ * Middleware function to validate ${resourceName} creation data using Zod schema.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @param {NextFunction} next - The next middleware function.
  * @returns {void}
  */
-export const validate${capitalizedResourceName} = (req: Request, res: Response, next: NextFunction) => {
-  // Validate request body
-  const { error, success } = zod${capitalizedResourceName}Schema.safeParse(req.body);
+export const validateCreate${capitalizedResourceName} = (req: Request, res: Response, next: NextFunction) => {
+  // Validate the request body for creating a new ${resourceName}
+  const parseResult = zodCreate${capitalizedResourceName}Schema.safeParse(req.body);
 
-  // Check if validation was successful
-  if (!success) {
-    // If validation failed, use the Zod error handler to send an error response
-    return zodErrorHandler(req, res, error);
+  // If validation fails, send an error response using the Zod error handler
+  if (!parseResult.success) {
+    return zodErrorHandler(req, res, parseResult.error);
   }
 
-  // If validation passed, proceed to the next middleware function
+  // If validation passes, proceed to the next middleware function
+  return next();
+};
+
+/**
+ * Zod schema for validating multiple ${resourceName} data during creation.
+ */
+const zodCreateMany${capitalizedResourceName}Schema = z.array(zodCreate${capitalizedResourceName}Schema);
+
+/**
+ * Middleware function to validate multiple ${resourceName} creation data using Zod schema.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {void}
+ */
+export const validateCreateMany${capitalizedResourceName} = (req: Request, res: Response, next: NextFunction) => {
+  const parseResult = zodCreateMany${capitalizedResourceName}Schema.safeParse(req.body);
+  if (!parseResult.success) {
+    return zodErrorHandler(req, res, parseResult.error);
+  }
+  return next();
+};
+
+/**
+ * Zod schema for validating ${resourceName} data during updates.
+ */
+const zodUpdate${capitalizedResourceName}Schema = z.object({
+  // Define fields required for updating an existing ${resourceName}.
+  // Example:
+  // fieldName: z.string({ required_error: 'Please provide a filedName.' }).optional(), // Fields can be optional during updates
+}).strict();
+
+/**
+ * Middleware function to validate ${resourceName} update data using Zod schema.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {void}
+ */
+export const validateUpdate${capitalizedResourceName} = (req: Request, res: Response, next: NextFunction) => {
+  // Validate the request body for updating an existing ${resourceName}
+  const parseResult = zodUpdate${capitalizedResourceName}Schema.safeParse(req.body);
+
+  // If validation fails, send an error response using the Zod error handler
+  if (!parseResult.success) {
+    return zodErrorHandler(req, res, parseResult.error);
+  }
+
+  // If validation passes, proceed to the next middleware function
+  return next();
+};
+
+/**
+ * Zod schema for validating multiple ${resourceName} data during updates.
+ */
+const zodUpdateMany${capitalizedResourceName}Schema = z.array(zodUpdate${capitalizedResourceName}Schema);
+
+
+/**
+ * Middleware function to validate multiple ${resourceName} update data using Zod schema.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {void}
+ */
+export const validateUpdateMany${capitalizedResourceName} = (req: Request, res: Response, next: NextFunction) => {
+  const parseResult = zodUpdateMany${capitalizedResourceName}Schema.safeParse(req.body);
+  if (!parseResult.success) {
+    return zodErrorHandler(req, res, parseResult.error);
+  }
   return next();
 };
     `;

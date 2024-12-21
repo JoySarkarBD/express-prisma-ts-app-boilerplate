@@ -3,29 +3,100 @@ import { z } from 'zod';
 import zodErrorHandler from '../../handlers/zod-error-handler';
 
 /**
- * Zod schema for validating user data.
+ * Zod schema for validating user data during creation.
  */
-const zodUserSchema = z.object({
- // Define schema fields here
+const zodCreateUserSchema = z.object({
+  // Define fields required for creating a new user.
+  // Example:
+  // filedName: z.string({ required_error: 'Please provide a filedName.' }).min(1, "cannot be empty."),
 }).strict();
 
 /**
- * Middleware function to validate user using Zod schema.
- * @param {object} req - The request object.
- * @param {object} res - The response object.
- * @param {function} next - The next middleware function.
+ * Middleware function to validate user creation data using Zod schema.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @param {NextFunction} next - The next middleware function.
  * @returns {void}
  */
-export const validateUser = (req: Request, res: Response, next: NextFunction) => {
-  // Validate request body
-  const { error, success } = zodUserSchema.safeParse(req.body);
+export const validateCreateUser = (req: Request, res: Response, next: NextFunction) => {
+  // Validate the request body for creating a new user
+  const parseResult = zodCreateUserSchema.safeParse(req.body);
 
-  // Check if validation was successful
-  if (!success) {
-    // If validation failed, use the Zod error handler to send an error response
-    return zodErrorHandler(req, res, error);
+  // If validation fails, send an error response using the Zod error handler
+  if (!parseResult.success) {
+    return zodErrorHandler(req, res, parseResult.error);
   }
 
-  // If validation passed, proceed to the next middleware function
+  // If validation passes, proceed to the next middleware function
+  return next();
+};
+
+/**
+ * Zod schema for validating multiple user data during creation.
+ */
+const zodCreateManyUserSchema = z.array(zodCreateUserSchema);
+
+/**
+ * Middleware function to validate multiple user creation data using Zod schema.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {void}
+ */
+export const validateCreateManyUser = (req: Request, res: Response, next: NextFunction) => {
+  const parseResult = zodCreateManyUserSchema.safeParse(req.body);
+  if (!parseResult.success) {
+    return zodErrorHandler(req, res, parseResult.error);
+  }
+  return next();
+};
+
+/**
+ * Zod schema for validating user data during updates.
+ */
+const zodUpdateUserSchema = z.object({
+  // Define fields required for updating an existing user.
+  // Example:
+  // fieldName: z.string({ required_error: 'Please provide a filedName.' }).optional(), // Fields can be optional during updates
+}).strict();
+
+/**
+ * Middleware function to validate user update data using Zod schema.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {void}
+ */
+export const validateUpdateUser = (req: Request, res: Response, next: NextFunction) => {
+  // Validate the request body for updating an existing user
+  const parseResult = zodUpdateUserSchema.safeParse(req.body);
+
+  // If validation fails, send an error response using the Zod error handler
+  if (!parseResult.success) {
+    return zodErrorHandler(req, res, parseResult.error);
+  }
+
+  // If validation passes, proceed to the next middleware function
+  return next();
+};
+
+/**
+ * Zod schema for validating multiple user data during updates.
+ */
+const zodUpdateManyUserSchema = z.array(zodUpdateUserSchema);
+
+
+/**
+ * Middleware function to validate multiple user update data using Zod schema.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {void}
+ */
+export const validateUpdateManyUser = (req: Request, res: Response, next: NextFunction) => {
+  const parseResult = zodUpdateManyUserSchema.safeParse(req.body);
+  if (!parseResult.success) {
+    return zodErrorHandler(req, res, parseResult.error);
+  }
   return next();
 };

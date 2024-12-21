@@ -14,7 +14,7 @@ import {
 } from './user.controller';
 
 //Import validation from corresponding module
-import { validateUser } from './user.validation';
+import { validateCreateUser, validateCreateManyUser, validateUpdateUser, validateUpdateManyUser} from './user.validation';
 import { validateId, validateIds } from '../../handlers/common-zod-validator';
 
 // Initialize router
@@ -26,26 +26,27 @@ const router = Router();
  * @description Create a new user
  * @access Public
  * @param {function} controller - ['createUser']
- * @param {function} validation - ['validateUser']
+ * @param {function} validation - ['validateCreateUser']
  */
-router.post("/create-user", validateUser, createUser);
+router.post("/create-user", validateCreateUser, createUser);
 
 /**
  * @route POST /api/v1/user/create-user/many
  * @description Create multiple user
  * @access Public
  * @param {function} controller - ['createManyUser']
+ * @param {function} validation - ['validateCreateManyUser']
  */
-router.post("/create-user/many", createManyUser);
+router.post("/create-user/many", validateCreateManyUser, createManyUser);
 
 /**
  * @route PUT /api/v1/user/update-user/many
  * @description Update multiple user information
  * @access Public
  * @param {function} controller - ['updateManyUser']
- * @param {function} validation - ['validateIds']
+ * @param {function} validation - ['validateIds', 'validateUpdateManyUser']
  */
-router.put("/update-user/many", validateIds, updateManyUser);
+router.put("/update-user/many", validateIds, validateUpdateManyUser, updateManyUser);
 
 /**
  * @route PUT /api/v1/user/update-user/:id
@@ -53,9 +54,9 @@ router.put("/update-user/many", validateIds, updateManyUser);
  * @param {string} id - The ID of the user to update
  * @access Public
  * @param {function} controller - ['updateUser']
- * @param {function} validation - ['validateId', 'validateUser']
+ * @param {function} validation - ['validateId', 'validateUpdateUser']
  */
-router.put("/update-user/:id", validateId, validateUser, updateUser);
+router.put("/update-user/:id", validateId, validateUpdateUser, updateUser);
 
 /**
  * @route DELETE /api/v1/user/delete-user/many
