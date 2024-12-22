@@ -37,10 +37,10 @@ const config: Config = {
   EMAIL_PASSWORD: process.env.EMAIL_PASSWORD as string,
   MAX_JSON_SIZE: process.env.MAX_JSON_SIZE as string,
   MAX_FILE_SIZE: parseInt(process.env.MAX_FILE_SIZE as string, 10),
-  URL_ENCODED: process.env.URL_ENCODED === 'true',
+  URL_ENCODED: process.env.URL_ENCODED === 'true' ? true : false,
   REQUEST_LIMIT_TIME: parseInt(process.env.REQUEST_LIMIT_TIME as string, 10),
   REQUEST_LIMIT_NUMBER: parseInt(process.env.REQUEST_LIMIT_NUMBER as string, 10),
-  WEB_CACHE: process.env.WEB_CACHE === 'true',
+  WEB_CACHE: process.env.WEB_CACHE === 'true' ? true : false,
   EXPRESS_FILE_UPLOAD_CONFIG: {
     createParentPath: true,
     preserveExtension: true,
