@@ -13,7 +13,7 @@ import catchAsync from '../../utils/catch-async/catch-async';
 export const createUser = catchAsync(async (req: Request, res: Response) => {
   // Call the service method to create a new user and get the result
   const result = await userServices.createUser(req.body);
-  // Send a success response with the created resource data
+  // Send a success response with the created user data
   ServerResponse(res, true, 201, 'User created successfully', result);
 });
 
@@ -27,8 +27,8 @@ export const createUser = catchAsync(async (req: Request, res: Response) => {
 export const createManyUser = catchAsync(async (req: Request, res: Response) => {
   // Call the service method to create multiple users and get the result
   const result = await userServices.createManyUser(req.body);
-  // Send a success response with the created resources data
-  ServerResponse(res, true, 201, 'Resources created successfully', result);
+  // Send a success response with the created users data
+  ServerResponse(res, true, 201, 'Users created successfully', result);
 });
 
 /**
@@ -42,7 +42,7 @@ export const updateUser = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   // Call the service method to update the user by ID and get the result
   const result = await userServices.updateUser(id, req.body);
-  // Send a success response with the updated resource data
+  // Send a success response with the updated user data
   ServerResponse(res, true, 200, 'User updated successfully', result);
 });
 
@@ -56,8 +56,8 @@ export const updateUser = catchAsync(async (req: Request, res: Response) => {
 export const updateManyUser = catchAsync(async (req: Request, res: Response) => {
   // Call the service method to update multiple user and get the result
   const result = await userServices.updateManyUser(req.body);
-  // Send a success response with the updated resources data
-  ServerResponse(res, true, 200, 'Resources updated successfully', result);
+  // Send a success response with the updated users data
+  ServerResponse(res, true, 200, 'Users updated successfully', result);
 });
 
 /**
@@ -83,10 +83,10 @@ export const deleteUser = catchAsync(async (req: Request, res: Response) => {
  * @returns {void}
  */
 export const deleteManyUser = catchAsync(async (req: Request, res: Response) => {
-  // Call the service method to delete multiple user and get the result
+  // Call the service method to delete multiple users and get the result
   await userServices.deleteManyUser(req.body);
   // Send a success response confirming the deletions
-  ServerResponse(res, true, 200, 'Resources deleted successfully');
+  ServerResponse(res, true, 200, 'Users deleted successfully');
 });
 
 /**
@@ -100,7 +100,7 @@ export const getUserById = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   // Call the service method to get the user by ID and get the result
   const result = await userServices.getUserById(id);
-  // Send a success response with the retrieved resource data
+  // Send a success response with the retrieved user data
   ServerResponse(res, true, 200, 'User retrieved successfully', result);
 });
 
@@ -112,8 +112,10 @@ export const getUserById = catchAsync(async (req: Request, res: Response) => {
  * @returns {void}
  */
 export const getManyUser = catchAsync(async (req: Request, res: Response) => {
+  // Type assertion for query parameters
+  const query = req.query as unknown as { searchKey?: string; showPerPage: number; pageNo: number };
   // Call the service method to get multiple user based on query parameters and get the result
-  const result = await userServices.getManyUser(req.query);
-  // Send a success response with the retrieved resources data
-  ServerResponse(res, true, 200, 'Resources retrieved successfully', result);
+  const {users, totalData, totalPages } = await userServices.getManyUser({},query.searchKey, query.showPerPage, query.pageNo);
+  // Send a success response with the retrieved users data
+  ServerResponse(res, true, 200, 'Users retrieved successfully', {users, totalData, totalPages});
 });

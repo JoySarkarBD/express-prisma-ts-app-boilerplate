@@ -216,7 +216,7 @@ import catchAsync from '../../utils/catch-async/catch-async';
 export const createBlog = catchAsync(async (req: Request, res: Response) => {
   // Call the service method to create a new blog and get the result
   const result = await blogServices.createBlog(req.body);
-  // Send a success response with the created resource data
+  // Send a success response with the created blog data
   ServerResponse(res, true, 201, 'Blog created successfully', result);
 });
 
@@ -230,8 +230,8 @@ export const createBlog = catchAsync(async (req: Request, res: Response) => {
 export const createManyBlog = catchAsync(async (req: Request, res: Response) => {
   // Call the service method to create multiple blogs and get the result
   const result = await blogServices.createManyBlog(req.body);
-  // Send a success response with the created resources data
-  ServerResponse(res, true, 201, 'Resources created successfully', result);
+  // Send a success response with the created blogs data
+  ServerResponse(res, true, 201, 'Blogs created successfully', result);
 });
 
 /**
@@ -245,7 +245,7 @@ export const updateBlog = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   // Call the service method to update the blog by ID and get the result
   const result = await blogServices.updateBlog(id, req.body);
-  // Send a success response with the updated resource data
+  // Send a success response with the updated blog data
   ServerResponse(res, true, 200, 'Blog updated successfully', result);
 });
 
@@ -259,8 +259,8 @@ export const updateBlog = catchAsync(async (req: Request, res: Response) => {
 export const updateManyBlog = catchAsync(async (req: Request, res: Response) => {
   // Call the service method to update multiple blog and get the result
   const result = await blogServices.updateManyBlog(req.body);
-  // Send a success response with the updated resources data
-  ServerResponse(res, true, 200, 'Resources updated successfully', result);
+  // Send a success response with the updated blogs data
+  ServerResponse(res, true, 200, 'Blogs updated successfully', result);
 });
 
 /**
@@ -286,10 +286,10 @@ export const deleteBlog = catchAsync(async (req: Request, res: Response) => {
  * @returns {void}
  */
 export const deleteManyBlog = catchAsync(async (req: Request, res: Response) => {
-  // Call the service method to delete multiple blog and get the result
+  // Call the service method to delete multiple blogs and get the result
   await blogServices.deleteManyBlog(req.body);
   // Send a success response confirming the deletions
-  ServerResponse(res, true, 200, 'Resources deleted successfully');
+  ServerResponse(res, true, 200, 'Blogs deleted successfully');
 });
 
 /**
@@ -303,7 +303,7 @@ export const getBlogById = catchAsync(async (req: Request, res: Response) => {
   const { id } = req.params;
   // Call the service method to get the blog by ID and get the result
   const result = await blogServices.getBlogById(id);
-  // Send a success response with the retrieved resource data
+  // Send a success response with the retrieved blog data
   ServerResponse(res, true, 200, 'Blog retrieved successfully', result);
 });
 
@@ -315,10 +315,12 @@ export const getBlogById = catchAsync(async (req: Request, res: Response) => {
  * @returns {void}
  */
 export const getManyBlog = catchAsync(async (req: Request, res: Response) => {
+  // Type assertion for query parameters
+  const query = req.query as unknown as { searchKey?: string; showPerPage: number; pageNo: number };
   // Call the service method to get multiple blog based on query parameters and get the result
-  const result = await blogServices.getManyBlog(req.query);
-  // Send a success response with the retrieved resources data
-  ServerResponse(res, true, 200, 'Resources retrieved successfully', result);
+  const {blogs, totalData, totalPages } = await blogServices.getManyBlog({},query.searchKey, query.showPerPage, query.pageNo);
+  // Send a success response with the retrieved blogs data
+  ServerResponse(res, true, 200, 'Blogs retrieved successfully', {blogs, totalData, totalPages});
 });
 ```
 
@@ -326,10 +328,11 @@ export const getManyBlog = catchAsync(async (req: Request, res: Response) => {
 
 ```typescript
 // Import Router from express
+// Import Router from express
 import { Router } from 'express';
 
 // Import controller from corresponding module
-import {
+import { 
   createBlog,
   createManyBlog,
   updateBlog,
@@ -337,17 +340,12 @@ import {
   deleteBlog,
   deleteManyBlog,
   getBlogById,
-  getManyBlog,
+  getManyBlog
 } from './blog.controller';
 
 //Import validation from corresponding module
-import {
-  validateCreateBlog,
-  validateCreateManyBlog,
-  validateUpdateBlog,
-  validateUpdateManyBlog,
-} from './blog.validation';
-import { validateId, validateIds } from '../../handlers/common-zod-validator';
+import { validateCreateBlog, validateCreateManyBlog, validateUpdateBlog, validateUpdateManyBlog} from './blog.validation';
+import { validateId, validateIds, validateSearchQueries } from '../../handlers/common-zod-validator';
 
 // Initialize router
 const router = Router();
@@ -360,7 +358,7 @@ const router = Router();
  * @param {function} controller - ['createBlog']
  * @param {function} validation - ['validateCreateBlog']
  */
-router.post('/create-blog', validateCreateBlog, createBlog);
+router.post("/create-blog", validateCreateBlog, createBlog);
 
 /**
  * @route POST /api/v1/blog/create-blog/many
@@ -369,7 +367,7 @@ router.post('/create-blog', validateCreateBlog, createBlog);
  * @param {function} controller - ['createManyBlog']
  * @param {function} validation - ['validateCreateManyBlog']
  */
-router.post('/create-blog/many', validateCreateManyBlog, createManyBlog);
+router.post("/create-blog/many", validateCreateManyBlog, createManyBlog);
 
 /**
  * @route PUT /api/v1/blog/update-blog/many
@@ -378,7 +376,7 @@ router.post('/create-blog/many', validateCreateManyBlog, createManyBlog);
  * @param {function} controller - ['updateManyBlog']
  * @param {function} validation - ['validateIds', 'validateUpdateManyBlog']
  */
-router.put('/update-blog/many', validateIds, validateUpdateManyBlog, updateManyBlog);
+router.put("/update-blog/many", validateIds, validateUpdateManyBlog, updateManyBlog);
 
 /**
  * @route PUT /api/v1/blog/update-blog/:id
@@ -388,7 +386,7 @@ router.put('/update-blog/many', validateIds, validateUpdateManyBlog, updateManyB
  * @param {function} controller - ['updateBlog']
  * @param {function} validation - ['validateId', 'validateUpdateBlog']
  */
-router.put('/update-blog/:id', validateId, validateUpdateBlog, updateBlog);
+router.put("/update-blog/:id", validateId, validateUpdateBlog, updateBlog);
 
 /**
  * @route DELETE /api/v1/blog/delete-blog/many
@@ -397,7 +395,7 @@ router.put('/update-blog/:id', validateId, validateUpdateBlog, updateBlog);
  * @param {function} controller - ['deleteManyBlog']
  * @param {function} validation - ['validateIds']
  */
-router.delete('/delete-blog/many', validateIds, deleteManyBlog);
+router.delete("/delete-blog/many", validateIds, deleteManyBlog);
 
 /**
  * @route DELETE /api/v1/blog/delete-blog/:id
@@ -407,16 +405,16 @@ router.delete('/delete-blog/many', validateIds, deleteManyBlog);
  * @param {function} controller - ['deleteBlog']
  * @param {function} validation - ['validateId']
  */
-router.delete('/delete-blog/:id', validateId, deleteBlog);
+router.delete("/delete-blog/:id", validateId, deleteBlog);
 
 /**
- * @route POST /api/v1/blog/get-blog/many
+ * @route GETapi/v1/blog/get-blog/many
  * @description Get multiple blog
  * @access Public
  * @param {function} controller - ['getManyBlog']
- * @param {function} validation - ['validateIds']
+ * @param {function} validation - ['validateSearchQueries']
  */
-router.post('/get-blog/many', validateIds, getManyBlog);
+router.get("/get-blog/many", validateSearchQueries, getManyBlog);
 
 /**
  * @route GET /api/v1/blog/get-blog/:id
@@ -426,7 +424,7 @@ router.post('/get-blog/many', validateIds, getManyBlog);
  * @param {function} controller - ['getBlogById']
  * @param {function} validation - ['validateId']
  */
-router.get('/get-blog/:id', validateId, getBlogById);
+router.get("/get-blog/:id", validateId, getBlogById);
 
 // Export the router
 module.exports = router;
@@ -480,7 +478,7 @@ const updateBlog = async (id: string, data: Prisma.BlogUpdateInput) => {
  * @param data - An array of data to update multiple blog.
  * @returns {Promise<Blog[]>} - The updated blog.
  */
-const updateManyBlog = async (data: { id: string; updates: Prisma.BlogUpdateInput }[]) => {
+const updateManyBlog = async (data: { id: string; updates: Prisma.BlogUpdateInput}[]) => {
   const updatePromises = data.map(({ id, updates }) =>
     prismaClient.blog.update({
       where: { id },
@@ -529,15 +527,55 @@ const getBlogById = async (id: string) => {
 };
 
 /**
- * Service function to retrieve multiple blog based on query parameters.
+ * Service function to retrieve multiple blogs based on query parameters.
  *
- * @param query - The query parameters for filtering blog.
- * @returns {Promise<Blog[]>} - The retrieved blog.
+ * @param query - The query parameters for filtering blogs.
+ * @param {string | undefined} searchKey - The optional search key for filtering blogs by blog fields.
+ * @param {number} showPerPage - The number of items to show per page.
+ * @param {number} pageNo - The page number for pagination.
+ * @returns {Promise<{ Blogs: Prisma.Blog[], total: number, totalPages: number }>} - The retrieved blogs, total count, and total pages.
  */
-const getManyBlog = async (query: Prisma.BlogWhereInput) => {
-  return await prismaClient.blog.findMany({
-    where: query,
+const getManyBlog = async (
+  query: Prisma.BlogWhereInput,
+  searchKey: string | undefined,
+  showPerPage: number,
+  pageNo: number
+): Promise<{ blogs: Prisma.Blog[]; totalData: number; totalPages: number }> => {
+  // Build the search filter based on the search key, if provided
+  const searchFilter: Prisma.BlogWhereInput = {
+    ...query,
+    OR: searchKey
+      ? [
+          { filedName: { contains: searchKey, mode: 'insensitive' } },
+          // Add more fields as needed
+        ]
+      : undefined,
+  };
+
+  // Calculate the number of items to skip based on the page number
+  const skipItems = (pageNo - 1) * showPerPage;
+
+  // Find the total count of matching blogs
+  const totalData = await prismaClient.blog.count({
+    where: searchFilter,
   });
+
+  // Find blogs based on the search filter with pagination
+  const blogs = await prismaClient.blog.findMany({
+    where: searchFilter,
+    skip: skipItems,
+    take: showPerPage,
+    select: {
+      // filed: true,
+      // filed: false,
+      // Add other fields as needed, excluding sensitive ones
+    },
+  });
+
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(totalData / showPerPage);
+
+  return { blogs, totalData, totalPages };
 };
 
 export const blogServices = {

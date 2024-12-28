@@ -92,15 +92,55 @@ const getUserById = async (id: string) => {
 };
 
 /**
- * Service function to retrieve multiple user based on query parameters.
+ * Service function to retrieve multiple users based on query parameters.
  *
- * @param query - The query parameters for filtering user.
- * @returns {Promise<User[]>} - The retrieved user.
+ * @param query - The query parameters for filtering users.
+ * @param {string | undefined} searchKey - The optional search key for filtering users by user fields.
+ * @param {number} showPerPage - The number of items to show per page.
+ * @param {number} pageNo - The page number for pagination.
+ * @returns {Promise<{ Users: Prisma.User[], total: number, totalPages: number }>} - The retrieved users, total count, and total pages.
  */
-const getManyUser = async (query: Prisma.UserWhereInput) => {
-  return await prismaClient.user.findMany({
-    where: query,
+const getManyUser = async (
+  query: Prisma.UserWhereInput,
+  searchKey: string | undefined,
+  showPerPage: number,
+  pageNo: number
+): Promise<{ users: Prisma.User[]; totalData: number; totalPages: number }> => {
+  // Build the search filter based on the search key, if provided
+  const searchFilter: Prisma.UserWhereInput = {
+    ...query,
+    OR: searchKey
+      ? [
+          { filedName: { contains: searchKey, mode: 'insensitive' } },
+          // Add more fields as needed
+        ]
+      : undefined,
+  };
+
+  // Calculate the number of items to skip based on the page number
+  const skipItems = (pageNo - 1) * showPerPage;
+
+  // Find the total count of matching users
+  const totalData = await prismaClient.user.count({
+    where: searchFilter,
   });
+
+  // Find users based on the search filter with pagination
+  const users = await prismaClient.user.findMany({
+    where: searchFilter,
+    skip: skipItems,
+    take: showPerPage,
+    select: {
+      // filed: true,
+      // filed: false,
+      // Add other fields as needed, excluding sensitive ones
+    },
+  });
+
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(totalData / showPerPage);
+
+  return { users, totalData, totalPages };
 };
 
 export const userServices = {

@@ -69,3 +69,45 @@ export const validateIds = (req: Request, res: Response, next: NextFunction) => 
   // If validation passed, proceed to the next middleware function
   return next();
 };
+
+/**
+ * Zod schema for validating request search query.
+ */
+const zodRequestSearchQuerySchema = z
+  .object({
+    searchKey: z.string({ required_error: 'Please specify the search key.' }).optional(),
+    showPerPage: z
+      .string({ required_error: 'Please specify the number of items to show per page.' })
+      .transform((val) => (val ? parseInt(val, 10) : undefined))
+      .refine((val) => val !== undefined && val > 0, {
+        message: 'Show per page must be a positive number.',
+      }),
+    pageNo: z
+      .string({ required_error: 'Please specify the page number.' })
+      .transform((val) => (val ? parseInt(val, 10) : undefined))
+      .refine((val) => val !== undefined && val > 0, {
+        message: 'Page number must be a positive number.',
+      }),
+  })
+  .strict();
+
+/**
+ * Middleware function to validate search queries using Zod schema.
+ * @param {Request} req - The request object.
+ * @param {Response} res - The response object.
+ * @param {NextFunction} next - The next middleware function.
+ * @returns {void}
+ * */
+export const validateSearchQueries = (req: Request, res: Response, next: NextFunction) => {
+  // Validate request query
+  const { success, error } = zodRequestSearchQuerySchema.safeParse(req.query);
+
+  // Check if validation was successful
+  if (!success) {
+    // If validation failed, use the Zod error handler to send an error response
+    return zodErrorHandler(req, res, error);
+  }
+
+  // If validation passed, proceed to the next middleware function
+  return next();
+};

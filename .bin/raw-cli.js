@@ -69,7 +69,7 @@ import {
 
 //Import validation from corresponding module
 import { validateCreate${capitalizedResourceName}, validateCreateMany${capitalizedResourceName}, validateUpdate${capitalizedResourceName}, validateUpdateMany${capitalizedResourceName}} from './${args[0]}.validation';
-import { validateId, validateIds } from '../../handlers/common-zod-validator';
+import { validateId, validateIds, validateSearchQueries } from '../../handlers/common-zod-validator';
 
 // Initialize router
 const router = Router();
@@ -132,13 +132,13 @@ router.delete("/delete-${args[0]}/many", validateIds, deleteMany${capitalizedRes
 router.delete("/delete-${args[0]}/:id", validateId, delete${capitalizedResourceName});
 
 /**
- * @route POST /api/v1/${args[0]}/get-${args[0]}/many
+ * @route GETapi/v1/${args[0]}/get-${args[0]}/many
  * @description Get multiple ${args[0]}
  * @access Public
  * @param {function} controller - ['getMany${capitalizedResourceName}']
- * @param {function} validation - ['validateIds']
+ * @param {function} validation - ['validateSearchQueries']
  */
-router.post("/get-${args[0]}/many", validateIds, getMany${capitalizedResourceName});
+router.get("/get-${args[0]}/many", validateSearchQueries, getMany${capitalizedResourceName});
 
 /**
  * @route GET /api/v1/${args[0]}/get-${args[0]}/:id
@@ -175,7 +175,7 @@ import catchAsync from '../../utils/catch-async/catch-async';
 export const create${capitalizedResourceName} = catchAsync(async (req: Request, res: Response) => {
   // Call the service method to create a new ${args[0]} and get the result
   const result = await ${resourceName}Services.create${capitalizedResourceName}(req.body);
-  // Send a success response with the created resource data
+  // Send a success response with the created ${args[0]} data
   ServerResponse(res, true, 201, '${capitalizedResourceName} created successfully', result);
 });
 
@@ -189,8 +189,8 @@ export const create${capitalizedResourceName} = catchAsync(async (req: Request, 
 export const createMany${capitalizedResourceName} = catchAsync(async (req: Request, res: Response) => {
   // Call the service method to create multiple ${resourceName}s and get the result
   const result = await ${resourceName}Services.createMany${capitalizedResourceName}(req.body);
-  // Send a success response with the created resources data
-  ServerResponse(res, true, 201, 'Resources created successfully', result);
+  // Send a success response with the created ${args[0]}s data
+  ServerResponse(res, true, 201, '${capitalizedResourceName}s created successfully', result);
 });
 
 /**
@@ -204,7 +204,7 @@ export const update${capitalizedResourceName} = catchAsync(async (req: Request, 
   const { id } = req.params;
   // Call the service method to update the ${args[0]} by ID and get the result
   const result = await ${resourceName}Services.update${capitalizedResourceName}(id, req.body);
-  // Send a success response with the updated resource data
+  // Send a success response with the updated ${args[0]} data
   ServerResponse(res, true, 200, '${capitalizedResourceName} updated successfully', result);
 });
 
@@ -218,8 +218,8 @@ export const update${capitalizedResourceName} = catchAsync(async (req: Request, 
 export const updateMany${capitalizedResourceName} = catchAsync(async (req: Request, res: Response) => {
   // Call the service method to update multiple ${args[0]} and get the result
   const result = await ${resourceName}Services.updateMany${capitalizedResourceName}(req.body);
-  // Send a success response with the updated resources data
-  ServerResponse(res, true, 200, 'Resources updated successfully', result);
+  // Send a success response with the updated ${args[0]}s data
+  ServerResponse(res, true, 200, '${capitalizedResourceName}s updated successfully', result);
 });
 
 /**
@@ -245,10 +245,10 @@ export const delete${capitalizedResourceName} = catchAsync(async (req: Request, 
  * @returns {void}
  */
 export const deleteMany${capitalizedResourceName} = catchAsync(async (req: Request, res: Response) => {
-  // Call the service method to delete multiple ${args[0]} and get the result
+  // Call the service method to delete multiple ${args[0]}s and get the result
   await ${resourceName}Services.deleteMany${capitalizedResourceName}(req.body);
   // Send a success response confirming the deletions
-  ServerResponse(res, true, 200, 'Resources deleted successfully');
+  ServerResponse(res, true, 200, '${capitalizedResourceName}s deleted successfully');
 });
 
 /**
@@ -262,7 +262,7 @@ export const get${capitalizedResourceName}ById = catchAsync(async (req: Request,
   const { id } = req.params;
   // Call the service method to get the ${args[0]} by ID and get the result
   const result = await ${resourceName}Services.get${capitalizedResourceName}ById(id);
-  // Send a success response with the retrieved resource data
+  // Send a success response with the retrieved ${args[0]} data
   ServerResponse(res, true, 200, '${capitalizedResourceName} retrieved successfully', result);
 });
 
@@ -274,10 +274,12 @@ export const get${capitalizedResourceName}ById = catchAsync(async (req: Request,
  * @returns {void}
  */
 export const getMany${capitalizedResourceName} = catchAsync(async (req: Request, res: Response) => {
+  // Type assertion for query parameters
+  const query = req.query as unknown as { searchKey?: string; showPerPage: number; pageNo: number };
   // Call the service method to get multiple ${args[0]} based on query parameters and get the result
-  const result = await ${resourceName}Services.getMany${capitalizedResourceName}(req.query);
-  // Send a success response with the retrieved resources data
-  ServerResponse(res, true, 200, 'Resources retrieved successfully', result);
+  const {${args[0]}s, totalData, totalPages } = await ${resourceName}Services.getMany${capitalizedResourceName}({},query.searchKey, query.showPerPage, query.pageNo);
+  // Send a success response with the retrieved ${args[0]}s data
+  ServerResponse(res, true, 200, '${capitalizedResourceName}s retrieved successfully', {${args[0]}s, totalData, totalPages});
 });
     `;
       // Path to the controller file
@@ -491,15 +493,55 @@ const get${capitalizedResourceName}ById = async (id: string) => {
 };
 
 /**
- * Service function to retrieve multiple ${resourceName} based on query parameters.
+ * Service function to retrieve multiple ${resourceName}s based on query parameters.
  *
- * @param query - The query parameters for filtering ${resourceName}.
- * @returns {Promise<${capitalizedResourceName}[]>} - The retrieved ${resourceName}.
+ * @param query - The query parameters for filtering ${resourceName}s.
+ * @param {string | undefined} searchKey - The optional search key for filtering ${resourceName}s by ${resourceName} fields.
+ * @param {number} showPerPage - The number of items to show per page.
+ * @param {number} pageNo - The page number for pagination.
+ * @returns {Promise<{ ${capitalizedResourceName}s: Prisma.${capitalizedResourceName}[], total: number, totalPages: number }>} - The retrieved ${resourceName}s, total count, and total pages.
  */
-const getMany${capitalizedResourceName} = async (query: Prisma.${capitalizedResourceName}WhereInput) => {
-  return await prismaClient.${resourceName}.findMany({
-    where: query,
+const getMany${capitalizedResourceName} = async (
+  query: Prisma.${capitalizedResourceName}WhereInput,
+  searchKey: string | undefined,
+  showPerPage: number,
+  pageNo: number
+): Promise<{ ${resourceName}s: Prisma.${capitalizedResourceName}[]; totalData: number; totalPages: number }> => {
+  // Build the search filter based on the search key, if provided
+  const searchFilter: Prisma.${capitalizedResourceName}WhereInput = {
+    ...query,
+    OR: searchKey
+      ? [
+          { filedName: { contains: searchKey, mode: 'insensitive' } },
+          // Add more fields as needed
+        ]
+      : undefined,
+  };
+
+  // Calculate the number of items to skip based on the page number
+  const skipItems = (pageNo - 1) * showPerPage;
+
+  // Find the total count of matching ${resourceName}s
+  const totalData = await prismaClient.${resourceName}.count({
+    where: searchFilter,
   });
+
+  // Find ${resourceName}s based on the search filter with pagination
+  const ${resourceName}s = await prismaClient.${resourceName}.findMany({
+    where: searchFilter,
+    skip: skipItems,
+    take: showPerPage,
+    select: {
+      // filed: true,
+      // filed: false,
+      // Add other fields as needed, excluding sensitive ones
+    },
+  });
+
+  // Calculate the total number of pages
+  const totalPages = Math.ceil(totalData / showPerPage);
+
+  return { ${resourceName}s, totalData, totalPages };
 };
 
 export const ${resourceName}Services = {

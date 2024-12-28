@@ -15,7 +15,7 @@ import {
 
 //Import validation from corresponding module
 import { validateCreateUser, validateCreateManyUser, validateUpdateUser, validateUpdateManyUser} from './user.validation';
-import { validateId, validateIds } from '../../handlers/common-zod-validator';
+import { validateId, validateIds, validateSearchQueries } from '../../handlers/common-zod-validator';
 
 // Initialize router
 const router = Router();
@@ -78,13 +78,13 @@ router.delete("/delete-user/many", validateIds, deleteManyUser);
 router.delete("/delete-user/:id", validateId, deleteUser);
 
 /**
- * @route POST /api/v1/user/get-user/many
+ * @route GETapi/v1/user/get-user/many
  * @description Get multiple user
  * @access Public
  * @param {function} controller - ['getManyUser']
- * @param {function} validation - ['validateIds']
+ * @param {function} validation - ['validateSearchQueries']
  */
-router.post("/get-user/many", validateIds, getManyUser);
+router.get("/get-user/many", validateSearchQueries, getManyUser);
 
 /**
  * @route GET /api/v1/user/get-user/:id
