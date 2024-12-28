@@ -221,7 +221,7 @@ export const createBlog = catchAsync(async (req: Request, res: Response) => {
 });
 
 /**
- * Controller function to handle the creation of multiple blog.
+ * Controller function to handle the creation of multiple blogs.
  *
  * @param {Request} req - The request object containing an array of blog data in the body.
  * @param {Response} res - The response object used to send the response.
@@ -250,14 +250,14 @@ export const updateBlog = catchAsync(async (req: Request, res: Response) => {
 });
 
 /**
- * Controller function to handle the update operation for multiple blog.
+ * Controller function to handle the update operation for multiple blogs.
  *
  * @param {Request} req - The request object containing an array of blog data in the body.
  * @param {Response} res - The response object used to send the response.
  * @returns {void}
  */
 export const updateManyBlog = catchAsync(async (req: Request, res: Response) => {
-  // Call the service method to update multiple blog and get the result
+  // Call the service method to update multiple blogs and get the result
   const result = await blogServices.updateManyBlog(req.body);
   // Send a success response with the updated blogs data
   ServerResponse(res, true, 200, 'Blogs updated successfully', result);
@@ -279,7 +279,7 @@ export const deleteBlog = catchAsync(async (req: Request, res: Response) => {
 });
 
 /**
- * Controller function to handle the deletion of multiple blog.
+ * Controller function to handle the deletion of multiple blogs.
  *
  * @param {Request} req - The request object containing an array of IDs of blog to delete in the body.
  * @param {Response} res - The response object used to send the response.
@@ -308,7 +308,7 @@ export const getBlogById = catchAsync(async (req: Request, res: Response) => {
 });
 
 /**
- * Controller function to handle the retrieval of multiple blog.
+ * Controller function to handle the retrieval of multiple blogs.
  *
  * @param {Request} req - The request object containing query parameters for filtering.
  * @param {Response} res - The response object used to send the response.
@@ -317,7 +317,7 @@ export const getBlogById = catchAsync(async (req: Request, res: Response) => {
 export const getManyBlog = catchAsync(async (req: Request, res: Response) => {
   // Type assertion for query parameters
   const query = req.query as unknown as { searchKey?: string; showPerPage: number; pageNo: number };
-  // Call the service method to get multiple blog based on query parameters and get the result
+  // Call the service method to get multiple blogs based on query parameters and get the result
   const {blogs, totalData, totalPages } = await blogServices.getManyBlog({},query.searchKey, query.showPerPage, query.pageNo);
   // Send a success response with the retrieved blogs data
   ServerResponse(res, true, 200, 'Blogs retrieved successfully', {blogs, totalData, totalPages});
@@ -327,7 +327,6 @@ export const getManyBlog = catchAsync(async (req: Request, res: Response) => {
 ### Route File Example
 
 ```typescript
-// Import Router from express
 // Import Router from express
 import { Router } from 'express';
 
@@ -362,7 +361,7 @@ router.post("/create-blog", validateCreateBlog, createBlog);
 
 /**
  * @route POST /api/v1/blog/create-blog/many
- * @description Create multiple blog
+ * @description Create multiple blogs
  * @access Public
  * @param {function} controller - ['createManyBlog']
  * @param {function} validation - ['validateCreateManyBlog']
@@ -371,7 +370,7 @@ router.post("/create-blog/many", validateCreateManyBlog, createManyBlog);
 
 /**
  * @route PUT /api/v1/blog/update-blog/many
- * @description Update multiple blog information
+ * @description Update multiple blogs information
  * @access Public
  * @param {function} controller - ['updateManyBlog']
  * @param {function} validation - ['validateIds', 'validateUpdateManyBlog']
@@ -390,7 +389,7 @@ router.put("/update-blog/:id", validateId, validateUpdateBlog, updateBlog);
 
 /**
  * @route DELETE /api/v1/blog/delete-blog/many
- * @description Delete multiple blog
+ * @description Delete multiple blogs
  * @access Public
  * @param {function} controller - ['deleteManyBlog']
  * @param {function} validation - ['validateIds']
@@ -409,7 +408,7 @@ router.delete("/delete-blog/:id", validateId, deleteBlog);
 
 /**
  * @route GETapi/v1/blog/get-blog/many
- * @description Get multiple blog
+ * @description Get multiple blogs
  * @access Public
  * @param {function} controller - ['getManyBlog']
  * @param {function} validation - ['validateSearchQueries']

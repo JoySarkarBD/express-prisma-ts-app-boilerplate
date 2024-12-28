@@ -86,7 +86,7 @@ router.post("/create-${args[0]}", validateCreate${capitalizedResourceName}, crea
 
 /**
  * @route POST /api/v1/${args[0]}/create-${args[0]}/many
- * @description Create multiple ${args[0]}
+ * @description Create multiple ${args[0]}s
  * @access Public
  * @param {function} controller - ['createMany${capitalizedResourceName}']
  * @param {function} validation - ['validateCreateMany${capitalizedResourceName}']
@@ -95,7 +95,7 @@ router.post("/create-${args[0]}/many", validateCreateMany${capitalizedResourceNa
 
 /**
  * @route PUT /api/v1/${args[0]}/update-${args[0]}/many
- * @description Update multiple ${args[0]} information
+ * @description Update multiple ${args[0]}s information
  * @access Public
  * @param {function} controller - ['updateMany${capitalizedResourceName}']
  * @param {function} validation - ['validateIds', 'validateUpdateMany${capitalizedResourceName}']
@@ -114,7 +114,7 @@ router.put("/update-${args[0]}/:id", validateId, validateUpdate${capitalizedReso
 
 /**
  * @route DELETE /api/v1/${args[0]}/delete-${args[0]}/many
- * @description Delete multiple ${args[0]}
+ * @description Delete multiple ${args[0]}s
  * @access Public
  * @param {function} controller - ['deleteMany${capitalizedResourceName}']
  * @param {function} validation - ['validateIds']
@@ -133,7 +133,7 @@ router.delete("/delete-${args[0]}/:id", validateId, delete${capitalizedResourceN
 
 /**
  * @route GETapi/v1/${args[0]}/get-${args[0]}/many
- * @description Get multiple ${args[0]}
+ * @description Get multiple ${args[0]}s
  * @access Public
  * @param {function} controller - ['getMany${capitalizedResourceName}']
  * @param {function} validation - ['validateSearchQueries']
@@ -180,7 +180,7 @@ export const create${capitalizedResourceName} = catchAsync(async (req: Request, 
 });
 
 /**
- * Controller function to handle the creation of multiple ${args[0]}.
+ * Controller function to handle the creation of multiple ${args[0]}s.
  *
  * @param {Request} req - The request object containing an array of ${args[0]} data in the body.
  * @param {Response} res - The response object used to send the response.
@@ -209,14 +209,14 @@ export const update${capitalizedResourceName} = catchAsync(async (req: Request, 
 });
 
 /**
- * Controller function to handle the update operation for multiple ${args[0]}.
+ * Controller function to handle the update operation for multiple ${args[0]}s.
  *
  * @param {Request} req - The request object containing an array of ${args[0]} data in the body.
  * @param {Response} res - The response object used to send the response.
  * @returns {void}
  */
 export const updateMany${capitalizedResourceName} = catchAsync(async (req: Request, res: Response) => {
-  // Call the service method to update multiple ${args[0]} and get the result
+  // Call the service method to update multiple ${args[0]}s and get the result
   const result = await ${resourceName}Services.updateMany${capitalizedResourceName}(req.body);
   // Send a success response with the updated ${args[0]}s data
   ServerResponse(res, true, 200, '${capitalizedResourceName}s updated successfully', result);
@@ -238,7 +238,7 @@ export const delete${capitalizedResourceName} = catchAsync(async (req: Request, 
 });
 
 /**
- * Controller function to handle the deletion of multiple ${args[0]}.
+ * Controller function to handle the deletion of multiple ${args[0]}s.
  *
  * @param {Request} req - The request object containing an array of IDs of ${args[0]} to delete in the body.
  * @param {Response} res - The response object used to send the response.
@@ -267,7 +267,7 @@ export const get${capitalizedResourceName}ById = catchAsync(async (req: Request,
 });
 
 /**
- * Controller function to handle the retrieval of multiple ${args[0]}.
+ * Controller function to handle the retrieval of multiple ${args[0]}s.
  *
  * @param {Request} req - The request object containing query parameters for filtering.
  * @param {Response} res - The response object used to send the response.
@@ -276,7 +276,7 @@ export const get${capitalizedResourceName}ById = catchAsync(async (req: Request,
 export const getMany${capitalizedResourceName} = catchAsync(async (req: Request, res: Response) => {
   // Type assertion for query parameters
   const query = req.query as unknown as { searchKey?: string; showPerPage: number; pageNo: number };
-  // Call the service method to get multiple ${args[0]} based on query parameters and get the result
+  // Call the service method to get multiple ${args[0]}s based on query parameters and get the result
   const {${args[0]}s, totalData, totalPages } = await ${resourceName}Services.getMany${capitalizedResourceName}({},query.searchKey, query.showPerPage, query.pageNo);
   // Send a success response with the retrieved ${args[0]}s data
   ServerResponse(res, true, 200, '${capitalizedResourceName}s retrieved successfully', {${args[0]}s, totalData, totalPages});

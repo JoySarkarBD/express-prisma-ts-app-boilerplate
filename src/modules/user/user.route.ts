@@ -32,7 +32,7 @@ router.post("/create-user", validateCreateUser, createUser);
 
 /**
  * @route POST /api/v1/user/create-user/many
- * @description Create multiple user
+ * @description Create multiple users
  * @access Public
  * @param {function} controller - ['createManyUser']
  * @param {function} validation - ['validateCreateManyUser']
@@ -41,7 +41,7 @@ router.post("/create-user/many", validateCreateManyUser, createManyUser);
 
 /**
  * @route PUT /api/v1/user/update-user/many
- * @description Update multiple user information
+ * @description Update multiple users information
  * @access Public
  * @param {function} controller - ['updateManyUser']
  * @param {function} validation - ['validateIds', 'validateUpdateManyUser']
@@ -60,7 +60,7 @@ router.put("/update-user/:id", validateId, validateUpdateUser, updateUser);
 
 /**
  * @route DELETE /api/v1/user/delete-user/many
- * @description Delete multiple user
+ * @description Delete multiple users
  * @access Public
  * @param {function} controller - ['deleteManyUser']
  * @param {function} validation - ['validateIds']
@@ -79,7 +79,7 @@ router.delete("/delete-user/:id", validateId, deleteUser);
 
 /**
  * @route GETapi/v1/user/get-user/many
- * @description Get multiple user
+ * @description Get multiple users
  * @access Public
  * @param {function} controller - ['getManyUser']
  * @param {function} validation - ['validateSearchQueries']

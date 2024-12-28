@@ -18,7 +18,7 @@ export const createUser = catchAsync(async (req: Request, res: Response) => {
 });
 
 /**
- * Controller function to handle the creation of multiple user.
+ * Controller function to handle the creation of multiple users.
  *
  * @param {Request} req - The request object containing an array of user data in the body.
  * @param {Response} res - The response object used to send the response.
@@ -47,14 +47,14 @@ export const updateUser = catchAsync(async (req: Request, res: Response) => {
 });
 
 /**
- * Controller function to handle the update operation for multiple user.
+ * Controller function to handle the update operation for multiple users.
  *
  * @param {Request} req - The request object containing an array of user data in the body.
  * @param {Response} res - The response object used to send the response.
  * @returns {void}
  */
 export const updateManyUser = catchAsync(async (req: Request, res: Response) => {
-  // Call the service method to update multiple user and get the result
+  // Call the service method to update multiple users and get the result
   const result = await userServices.updateManyUser(req.body);
   // Send a success response with the updated users data
   ServerResponse(res, true, 200, 'Users updated successfully', result);
@@ -76,7 +76,7 @@ export const deleteUser = catchAsync(async (req: Request, res: Response) => {
 });
 
 /**
- * Controller function to handle the deletion of multiple user.
+ * Controller function to handle the deletion of multiple users.
  *
  * @param {Request} req - The request object containing an array of IDs of user to delete in the body.
  * @param {Response} res - The response object used to send the response.
@@ -105,7 +105,7 @@ export const getUserById = catchAsync(async (req: Request, res: Response) => {
 });
 
 /**
- * Controller function to handle the retrieval of multiple user.
+ * Controller function to handle the retrieval of multiple users.
  *
  * @param {Request} req - The request object containing query parameters for filtering.
  * @param {Response} res - The response object used to send the response.
@@ -114,7 +114,7 @@ export const getUserById = catchAsync(async (req: Request, res: Response) => {
 export const getManyUser = catchAsync(async (req: Request, res: Response) => {
   // Type assertion for query parameters
   const query = req.query as unknown as { searchKey?: string; showPerPage: number; pageNo: number };
-  // Call the service method to get multiple user based on query parameters and get the result
+  // Call the service method to get multiple users based on query parameters and get the result
   const {users, totalData, totalPages } = await userServices.getManyUser({},query.searchKey, query.showPerPage, query.pageNo);
   // Send a success response with the retrieved users data
   ServerResponse(res, true, 200, 'Users retrieved successfully', {users, totalData, totalPages});
