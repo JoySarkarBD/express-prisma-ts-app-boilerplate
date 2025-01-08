@@ -1,4 +1,5 @@
 import fs from 'fs';
+import os from 'os';
 import path from 'path';
 
 // Define the path to the log directory
@@ -23,7 +24,7 @@ export const logMessage = (message: string) => {
   }
 
   // Log message format
-  const logMessage = `${dateAndTime} | [INFO]: ${message}\n`;
+  const logMessage = `Host Name: ${os.hostname()} | ${dateAndTime} | [INFO]: ${message}\n`;
 
   // Write to log file
   fs.appendFile(logFileForToday, logMessage, (err) => {

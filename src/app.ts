@@ -11,6 +11,7 @@ import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import morgan from 'morgan';
+import { loggerStream } from './utils/logger/logger';
 
 // Express app initialization
 const app: Application = express();
@@ -30,6 +31,9 @@ app.use(helmet());
 app.use(mongoSanitize());
 app.use(hpp());
 app.use(morgan('dev'));
+
+// Use Morgan with the custom logger
+app.use(morgan('combined', { stream: loggerStream }));
 
 // Request Rate Limiting
 app.use(
