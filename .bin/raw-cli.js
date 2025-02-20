@@ -94,23 +94,23 @@ router.post("/create-${args[0]}", validateCreate${capitalizedResourceName}, crea
 router.post("/create-${args[0]}/many", validateCreateMany${capitalizedResourceName}, createMany${capitalizedResourceName});
 
 /**
- * @route PUT /api/v1/${args[0]}/update-${args[0]}/many
+ * @route PATCH /api/v1/${args[0]}/update-${args[0]}/many
  * @description Update multiple ${args[0]}s information
  * @access Public
  * @param {function} controller - ['updateMany${capitalizedResourceName}']
  * @param {function} validation - ['validateIds', 'validateUpdateMany${capitalizedResourceName}']
  */
-router.put("/update-${args[0]}/many", validateIds, validateUpdateMany${capitalizedResourceName}, updateMany${capitalizedResourceName});
+router.patch("/update-${args[0]}/many", validateIds, validateUpdateMany${capitalizedResourceName}, updateMany${capitalizedResourceName});
 
 /**
- * @route PUT /api/v1/${args[0]}/update-${args[0]}/:id
+ * @route PATCH /api/v1/${args[0]}/update-${args[0]}/:id
  * @description Update ${args[0]} information
  * @param {string} id - The ID of the ${args[0]} to update
  * @access Public
  * @param {function} controller - ['update${capitalizedResourceName}']
  * @param {function} validation - ['validateId', 'validateUpdate${capitalizedResourceName}']
  */
-router.put("/update-${args[0]}/:id", validateId, validateUpdate${capitalizedResourceName}, update${capitalizedResourceName});
+router.patch("/update-${args[0]}/:id", validateId, validateUpdate${capitalizedResourceName}, update${capitalizedResourceName});
 
 /**
  * @route DELETE /api/v1/${args[0]}/delete-${args[0]}/many
