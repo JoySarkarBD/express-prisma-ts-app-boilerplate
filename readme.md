@@ -369,23 +369,23 @@ router.post("/create-blog", validateCreateBlog, createBlog);
 router.post("/create-blog/many", validateCreateManyBlog, createManyBlog);
 
 /**
- * @route PUT /api/v1/blog/update-blog/many
+ * @route PATCH /api/v1/blog/update-blog/many
  * @description Update multiple blogs information
  * @access Public
  * @param {function} controller - ['updateManyBlog']
  * @param {function} validation - ['validateIds', 'validateUpdateManyBlog']
  */
-router.put("/update-blog/many", validateIds, validateUpdateManyBlog, updateManyBlog);
+router.patch("/update-blog/many", validateIds, validateUpdateManyBlog, updateManyBlog);
 
 /**
- * @route PUT /api/v1/blog/update-blog/:id
+ * @route PATCH /api/v1/blog/update-blog/:id
  * @description Update blog information
  * @param {string} id - The ID of the blog to update
  * @access Public
  * @param {function} controller - ['updateBlog']
  * @param {function} validation - ['validateId', 'validateUpdateBlog']
  */
-router.put("/update-blog/:id", validateId, validateUpdateBlog, updateBlog);
+router.patch("/update-blog/:id", validateId, validateUpdateBlog, updateBlog);
 
 /**
  * @route DELETE /api/v1/blog/delete-blog/many
